@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Card Viewer</title>
+
+<style>
+body {
+    margin:0;
+    background:#0f172a;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card {
+    width:90%;
+    max-width:350px;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.photo {
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #2563eb;
+    margin-bottom:10px;
+}
+
+.title {
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.info {
+    margin:5px 0;
+}
+
+.id {
+    color:#2563eb;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+    Loading ID...
+</div>
+
+<script>
+// GET ID FROM URL
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+if (!id) {
+    document.getElementById("card").innerHTML = "No ID provided";
+} else {
+
+    const url = "https://raw.githubusercontent.com/nedxtark/id-cards/main/data/" + id + ".json";
+
+    fetch(url)
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("card").innerHTML = `
+            <div class="title">PERSON ID</div>
+
+            <img class="photo" src="${data.photo || ''}" onerror="this.style.display='none'">
+
+            <div class="info id">ID: ${data.id}</div>
+            <div class="info"><b>Name:</b><br>
+                ${data.lastName}, ${data.firstName} ${data.middleName}
+            </div>
+        `;
+    })
+    .catch(err => {
+        document.getElementById("card").innerHTML = "ID not found";
+    });
+}
+</script>
+
+</body>
+</html>
