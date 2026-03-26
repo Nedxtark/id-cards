@@ -153,13 +153,16 @@ if (!personID) {
     return res.json()
   })
   .then(data => {
+ if (data.length === 0) {
+    document.getElementById("card").innerHTML = "<h3>ID not found</h3>"
+    return
+  }
 
-    if (data.length === 0) {
-      document.getElementById("card").innerHTML = "<h3>ID not found</h3>"
-      return
-    }
+  const p = data[0]
 
-    const p = data[0]
+  const bucket = "photos"
+  const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${p.Photo}`
+
 
     document.getElementById("photo").src = p.Photo || "https://via.placeholder.com/120"
     document.getElementById("name").innerText = p.Name
