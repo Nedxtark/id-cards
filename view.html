@@ -3,68 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ID Card</title>
+<title>ID Card Viewer</title>
 <style>
-  body { font-family: Arial, sans-serif; display:flex; justify-content:center; margin-top:50px; }
-  .id-card { width: 350px; height: 200px; border: 2px solid #333; padding: 20px; border-radius:10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); position:relative; }
-  .id-card img.photo { width: 80px; height: 100px; object-fit:cover; position:absolute; top:20px; right:20px; border:1px solid #333; }
-  .id-card h2 { margin: 0; font-size:18px; }
-  .id-card p { margin: 2px 0; font-size:14px; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .card { width: 400px; padding: 20px; background: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 8px; text-align: center; }
+  .photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; }
+  .qr { width: 100px; height: 100px; margin-top: 15px; }
+  .info { text-align: left; margin-top: 10px; }
+  .info div { margin-bottom: 6px; }
 </style>
 </head>
 <body>
-<div class="id-card">
-  <h2 id="fullName">Loading...</h2>
-  <p>ID: <span id="personID"></span></p>
-  <p>Birthdate: <span id="birthdate"></span></p>
-  <p>Gender: <span id="gender"></span></p>
-  <p>Age: <span id="age"></span></p>
-  <p>Address: <span id="address"></span></p>
-  <p>Mobile: <span id="mobile"></span></p>
-  <p>Email: <span id="email"></span></p>
-  <img id="photo" class="photo" src="" alt="Photo">
+<div class="card" id="card">
+  <img src="" class="photo" id="photo">
+  <h2 id="name"></h2>
+  <div class="info">
+    <div><strong>Person ID:</strong> <span id="person_id"></span></div>
+    <div><strong>Birthdate:</strong> <span id="birthdate"></span></div>
+    <div><strong>Gender:</strong> <span id="gender"></span></div>
+    <div><strong>Age:</strong> <span id="age"></span></div>
+    <div><strong>Address:</strong> <span id="address"></span></div>
+    <div><strong>Mobile:</strong> <span id="mobile"></span></div>
+    <div><strong>Email:</strong> <span id="email"></span></div>
+  </div>
+  <img src="" class="qr" id="qr">
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
+  // Supabase project info
+  const SUPABASE_URL = 'https://euocewpmtmevbxoskmlr.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI'; // replace with your anon key
 
-const supabase = supabase.createClient(https://euocewpmtmevbxoskmlr.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI);
+  // Get person_id from URL
+  const params = new URLSearchParams(window.location.search);
+  const personID = params.get('id');
 
-// Get id from URL
-const urlParams = new URLSearchParams(window.location.search);
-const personID = urlParams.get('id');
-
-document.getElementById('personID').textContent = personID;
-
-async function loadData() {
-    if(!personID) return;
-
-    let { data, error } = await supabase
-        .from('ids')
-        .select('*')
-        .eq('person_id', personID)
-        .single();
-
-    if(error) {
-        alert("Record not found or error: " + error.message);
-        return;
-    }
-
-    document.getElementById('fullName').textContent = data.Name;
-    document.getElementById('birthdate').textContent = data.Birthdate;
-    document.getElementById('gender').textContent = data.Gender;
-    document.getElementById('age').textContent = data.Age;
-    document.getElementById('address').textContent = data.Address;
-    document.getElementById('mobile').textContent = data.Mobile;
-    document.getElementById('email').textContent = data.Email;
-    if(data.Photo) {
-        document.getElementById('photo').src = data.Photo;
-    }
-}
-
-loadData();
+  if(!personID) {
+    document.getElementById('card').innerHTML = '<p>Person ID not provided.</p>';
+  } else {
+    fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${personID}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.length === 0) {
+        document.getElementById('card').innerHTML = '<p>Person not found.</p>';
+      } else {
+        const person = data[0];
+        document.getElementById('photo').src = person.Photo || '';
+        document.getElementById('name').innerText = person.Name;
+        document.getElementById('person_id').innerText = person.person_id;
+        document.getElementById('birthdate').innerText = person.Birthdate;
+        document.getElementById('gender').innerText = person.Gender;
+        document.getElementById('age').innerText = person.Age;
+        document.getElementById('address').innerText = person.Address;
+        document.getElementById('mobile').innerText = person.Mobile;
+        document.getElementById('email').innerText = person.Email;
+        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${person.person_id}`;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('card').innerHTML = '<p>Error fetching data.</p>';
+    });
+  }
 </script>
 </body>
 </html>
