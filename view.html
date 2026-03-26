@@ -3,151 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Professional ID Card</title>
+<title>ID Card</title>
 <style>
-  @media print {
-    body { margin: 0; }
-    .id-card { page-break-inside: avoid; }
-  }
-
   body {
     font-family: 'Arial', sans-serif;
-    background: #eee;
+    background: #f0f0f0;
     display: flex;
     justify-content: center;
-    padding: 30px;
+    align-items: center;
+    height: 100vh;
   }
-
   .id-card {
-    width: 350px;
-    height: 220px;
-    background: #ffffff;
+    width: 340px; /* CR80 card width */
+    height: 210px; /* CR80 card height */
+    background: linear-gradient(135deg, #4a90e2, #357ABD);
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: white;
     display: flex;
     flex-direction: row;
     overflow: hidden;
-    border: 2px solid #004080;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    padding: 10px;
   }
-
-  .left-panel {
-    width: 40%;
-    background: #004080;
-    color: #fff;
+  .left {
+    width: 100px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 15px 5px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
   }
-
-  .left-panel img.photo {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 2px solid #fff;
+  .left img {
+    width: 80px;
+    height: 100px;
     object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid white;
   }
-
-  .left-panel img.logo {
-    width: 60px;
-    margin-bottom: 5px;
-  }
-
-  .right-panel {
-    width: 60%;
-    padding: 15px 10px;
+  .right {
+    flex: 1;
+    padding-left: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-
-  .right-panel h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #004080;
+  .right .info {
+    flex: 1;
   }
-
-  .info {
-    font-size: 12px;
-    line-height: 1.4;
+  .right h2, .right p {
+    margin: 3px 0;
   }
-
-  .info div {
-    margin-bottom: 4px;
-  }
-
   .qr {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     align-self: flex-end;
   }
-
 </style>
 </head>
 <body>
 
-<div class="id-card" id="idCard">
-  <div class="left-panel">
-    <img src="" class="logo" id="logo" alt="Logo">
-    <img src="" class="photo" id="photo" alt="Photo">
+<div class="id-card">
+  <div class="left">
+    <img id="photo" src="" alt="Photo">
   </div>
-  <div class="right-panel">
-    <h2 id="name">Full Name</h2>
+  <div class="right">
     <div class="info">
-      <div><strong>ID:</strong> <span id="person_id"></span></div>
-      <div><strong>Birthdate:</strong> <span id="birthdate"></span></div>
-      <div><strong>Gender:</strong> <span id="gender"></span></div>
-      <div><strong>Age:</strong> <span id="age"></span></div>
-      <div><strong>Address:</strong> <span id="address"></span></div>
-      <div><strong>Mobile:</strong> <span id="mobile"></span></div>
-      <div><strong>Email:</strong> <span id="email"></span></div>
+      <h2 id="name">Full Name</h2>
+      <p><strong>ID:</strong> <span id="person_id"></span></p>
+      <p><strong>Birthdate:</strong> <span id="birthdate"></span></p>
+      <p><strong>Gender:</strong> <span id="gender"></span></p>
+      <p><strong>Age:</strong> <span id="age"></span></p>
+      <p><strong>Address:</strong> <span id="address"></span></p>
+      <p><strong>Mobile:</strong> <span id="mobile"></span></p>
+      <p><strong>Email:</strong> <span id="email"></span></p>
     </div>
-    <img src="" class="qr" id="qr" alt="QR Code">
+    <img id="qr" class="qr" src="" alt="QR Code">
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = 'https://euocewpmtmevbxoskmlr.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI'; // replace with your anon key
+const url = 'https://euocewpmtmevbxoskmlr.supabase.co';
+const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI';
+const supabase = supabase.createClient(url, key);
 
-  // optional: logo URL
-  const LOGO_URL = 'https://i.imgur.com/yourlogo.png';
+const params = new URLSearchParams(window.location.search);
+const personID = params.get('id');
 
-  const params = new URLSearchParams(window.location.search);
-  const personID = params.get('id');
-
-  if(personID){
-    fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${personID}`, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.length){
-        const p = data[0];
-        document.getElementById('photo').src = p.Photo || '';
-        document.getElementById('logo').src = LOGO_URL;
-        document.getElementById('name').innerText = p.Name;
-        document.getElementById('person_id').innerText = p.person_id;
-        document.getElementById('birthdate').innerText = p.Birthdate;
-        document.getElementById('gender').innerText = p.Gender;
-        document.getElementById('age').innerText = p.Age;
-        document.getElementById('address').innerText = p.Address;
-        document.getElementById('mobile').innerText = p.Mobile;
-        document.getElementById('email').innerText = p.Email;
-        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${p.person_id}`;
-      } else {
-        document.getElementById('idCard').innerHTML = '<p>Person not found.</p>';
-      }
-    })
-    .catch(err => { document.getElementById('idCard').innerHTML = '<p>Error fetching data.</p>'; });
-  } else {
-    document.getElementById('idCard').innerHTML = '<p>Person ID not provided.</p>';
+async function loadID() {
+  const { data, error } = await supabase
+    .from('ids')
+    .select('*')
+    .eq('person_id', personID)
+    .single();
+    
+  if (error || !data) {
+    alert('PersonID not found!');
+    return;
   }
+
+  document.getElementById('name').textContent = data.Name;
+  document.getElementById('person_id').textContent = data.person_id;
+  document.getElementById('birthdate').textContent = data.Birthdate;
+  document.getElementById('gender').textContent = data.Gender;
+  document.getElementById('age').textContent = data.Age;
+  document.getElementById('address').textContent = data.Address;
+  document.getElementById('mobile').textContent = data.Mobile;
+  document.getElementById('email').textContent = data.Email;
+  document.getElementById('photo').src = data.Photo;
+  document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${personID}`;
+}
+
+loadID();
 </script>
 
 </body>
