@@ -1,50 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Supabase Save</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-  <!-- ✅ Put Supabase CDN here -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-</head>
+<script>
 
-<body>
+const SUPABASE_URL = "https://yourproject.supabase.co"
+const SUPABASE_KEY = "YOUR_ANON_KEY"
 
-  <h2>Student Form</h2>
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-  <!-- Your input fields -->
-  <input type="text" id="name" placeholder="Name"><br><br>
-  <input type="text" id="course" placeholder="Course"><br><br>
-  <input type="text" id="year" placeholder="Year"><br><br>
+const params = new URLSearchParams(window.location.search)
+const personID = params.get("id")
 
-  <!-- Button to trigger save -->
-  <button onclick="saveData()">Save</button>
+async function loadID(){
 
-  <!-- ✅ Put your script HERE (after inputs) -->
-  <script>
-    const supabaseClient = supabase.createClient(
-      "sb_publishable_mIsj5D8tQ9fr8N7IJhzwJQ_NgTZj8ba",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"
-    );
+let { data, error } = await supabaseClient
+.from("ids")
+.select("*")
+.eq("person_id", personID)
+.single()
 
-    async function saveData() {
-      const name = document.getElementById("name").value;
-      const course = document.getElementById("course").value;
-      const year = document.getElementById("year").value;
+if(data){
 
-      const { data, error } = await supabaseClient
-        .from("ids")
-        .insert([{ name, course, year }])
-        .select();
+document.getElementById("name").innerText = data.name
+document.getElementById("gender").innerText = data.gender
+document.getElementById("birthdate").innerText = data.birthdate
+document.getElementById("mobile").innerText = data.mobile
+document.getElementById("photo").src = data.photo
 
-      if (error) {
-        alert("Error saving");
-        console.log(error);
-      } else {
-        const id = data[0].id;
-        alert("Saved! ID: " + id);
-      }
-    }
-  </script>
+}
 
-</body>
-</html>
+}
+
+loadID()
+
+</script>
