@@ -164,7 +164,7 @@ if (!personID) {
   const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${p.Photo}`
 
 
-    document.getElementById("photo").src = p.Photo || "https://via.placeholder.com/120"
+    document.getElementById("photo").src = photoUrl || "https://via.placeholder.com/120"
     document.getElementById("name").innerText = p.Name
     document.getElementById("person_id").innerText = p.person_id
     document.getElementById("birthdate").innerText = p.Birthdate
