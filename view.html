@@ -5,79 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ID Card</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
   body {
-    font-family: 'Arial', sans-serif;
-    background: #f0f0f0;
+    font-family: 'Montserrat', sans-serif;
+    background: #e0e0e0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
   }
+
   .id-card {
-    width: 340px; /* CR80 card width */
-    height: 210px; /* CR80 card height */
-    background: linear-gradient(135deg, #4a90e2, #357ABD);
-    border-radius: 10px;
-    color: white;
-    display: flex;
-    flex-direction: row;
+    width: 340px;  /* CR80 card */
+    height: 210px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    background: #ffb74d;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+
+  .top-bar img {
+    height: 30px;
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
     padding: 10px;
   }
-  .left {
-    width: 100px;
+
+  .photo-section {
+    width: 90px;
+    height: 120px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
   }
-  .left img {
-    width: 80px;
-    height: 100px;
+
+  .photo-section img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 5px;
-    border: 2px solid white;
   }
-  .right {
+
+  .info-section {
     flex: 1;
-    padding-left: 15px;
+    margin-left: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-  .right .info {
-    flex: 1;
+
+  .info-section h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
   }
-  .right h2, .right p {
-    margin: 3px 0;
+
+  .info-section p {
+    margin: 2px 0;
+    font-size: 12px;
   }
-  .qr {
-    width: 80px;
-    height: 80px;
-    align-self: flex-end;
+
+  .qr-section {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px 10px 0;
+  }
+
+  .qr-section img {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    background: #fff;
   }
 </style>
 </head>
 <body>
 
 <div class="id-card">
-  <div class="left">
-    <img id="photo" src="" alt="Photo">
+  <div class="top-bar">
+    <img src="logo.png" alt="Logo">
   </div>
-  <div class="right">
-    <div class="info">
-      <h2 id="name">Full Name</h2>
-      <p><strong>ID:</strong> <span id="person_id"></span></p>
-      <p><strong>Birthdate:</strong> <span id="birthdate"></span></p>
-      <p><strong>Gender:</strong> <span id="gender"></span></p>
-      <p><strong>Age:</strong> <span id="age"></span></p>
-      <p><strong>Address:</strong> <span id="address"></span></p>
-      <p><strong>Mobile:</strong> <span id="mobile"></span></p>
-      <p><strong>Email:</strong> <span id="email"></span></p>
+  <div class="main">
+    <div class="photo-section">
+      <img id="photo" src="" alt="Photo">
     </div>
-    <img id="qr" class="qr" src="" alt="QR Code">
+    <div class="info-section">
+      <div>
+        <h2 id="name">Full Name</h2>
+        <p><strong>ID:</strong> <span id="person_id"></span></p>
+        <p><strong>Birthdate:</strong> <span id="birthdate"></span></p>
+        <p><strong>Gender:</strong> <span id="gender"></span></p>
+        <p><strong>Age:</strong> <span id="age"></span></p>
+        <p><strong>Address:</strong> <span id="address"></span></p>
+        <p><strong>Mobile:</strong> <span id="mobile"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+      </div>
+    </div>
+  </div>
+  <div class="qr-section">
+    <img id="qr" src="" alt="QR Code">
   </div>
 </div>
 
@@ -111,7 +156,7 @@ async function loadID() {
   document.getElementById('mobile').textContent = data.Mobile;
   document.getElementById('email').textContent = data.Email;
   document.getElementById('photo').src = data.Photo;
-  document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${personID}`;
+  document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${personID}`;
 }
 
 loadID();
