@@ -173,7 +173,7 @@ if (!personID) {
   const p = data[0]
 
   const bucket = "photos"
-  const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${p.Photo}`
+  const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${p.photo}`
 
 document.getElementById("photo").src = photoUrl || "https://via.placeholder.com/120"
 document.getElementById("name").innerText = p.name
