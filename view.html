@@ -98,6 +98,20 @@ body {
   color: green;
   font-weight: bold;
 }
+  .training-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.training-btn:hover {
+  background: #217dbb;
+}
 </style>
 
 </head>
@@ -124,7 +138,7 @@ body {
   </div>
 
 <div class="footer">
-  <img id="qr" class="qr" src="">
+  <button id="trainingBtn" class="training-btn">View Training Details</button>
   <div class="status">✔ VERIFIED</div>
 </div>
 
@@ -172,8 +186,9 @@ if (!personID) {
     document.getElementById("mobile").innerText = p.Mobile
     document.getElementById("email").innerText = p.Email
 
-    document.getElementById("qr").src =
-      "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + p.person_id
+    document.getElementById("trainingBtn").onclick = () => {
+  window.open("training.html?id=" + p.person_id, "_blank")
+}
 
   })
   .catch(err => {
