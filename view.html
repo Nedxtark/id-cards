@@ -175,16 +175,15 @@ if (!personID) {
   const bucket = "photos"
   const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${p.Photo}`
 
-
-    document.getElementById("photo").src = photoUrl || "https://via.placeholder.com/120"
-    document.getElementById("name").innerText = p.Name
-    document.getElementById("person_id").innerText = p.person_id
-    document.getElementById("birthdate").innerText = p.Birthdate
-    document.getElementById("gender").innerText = p.Gender
-    document.getElementById("age").innerText = p.Age
-    document.getElementById("address").innerText = p.Address
-    document.getElementById("mobile").innerText = p.Mobile
-    document.getElementById("email").innerText = p.Email
+document.getElementById("photo").src = photoUrl || "https://via.placeholder.com/120"
+document.getElementById("name").innerText = p.name
+document.getElementById("person_id").innerText = p.person_id
+document.getElementById("birthdate").innerText = p.birthdate
+document.getElementById("gender").innerText = p.gender
+document.getElementById("age").innerText = p.age
+document.getElementById("address").innerText = p.address
+document.getElementById("mobile").innerText = p.mobile
+document.getElementById("email").innerText = p.email
 
     document.getElementById("trainingBtn").onclick = () => {
   window.open("training.html?id=" + p.person_id, "_blank")
