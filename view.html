@@ -138,10 +138,10 @@ body {
   <div class="header">IDENTIFICATION CARD</div>
 
   <div class="photo-container">
-    <img id="photo" class="photo" src="">
+    <img id="photo" class="photo" src="https://via.placeholder.com/120">
   </div>
 
-  <div class="name" id="name">Loading...</div>
+  <div class="name" id="name">Please wait...</div>
 
   <div class="info">
     <div class="row"><span class="label">ID:</span><span id="person_id" class="value"></span></div>
@@ -155,10 +155,7 @@ body {
 
   <div class="footer">
     <button id="trainingBtn" class="training-btn">View Training Details</button>
-
-    <!-- TRAINING LIST -->
     <div id="trainingContainer" class="training-container"></div>
-
     <div class="status">✔ VERIFIED</div>
   </div>
 
@@ -166,7 +163,7 @@ body {
 
 <script>
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co"
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI" // put your key
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"
 
 const params = new URLSearchParams(window.location.search)
 const personID = params.get("id")
@@ -181,31 +178,35 @@ if (!personID) {
   fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${personID}&select=*`, {
     headers: {
       "apikey": SUPABASE_KEY,
-      "Authorization": "Bearer " + SUPABASE_KEY,
-      "Content-Type": "application/json"
+      "Authorization": "Bearer " + SUPABASE_KEY
     }
   })
   .then(res => res.json())
   .then(data => {
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
       document.getElementById("card").innerHTML = "<h3>ID not found</h3>"
       return
     }
 
     const p = data[0]
 
-    const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/photos/${p.photo}`
+    // PHOTO
+    const photoUrl = p.photo
+      ? `${SUPABASE_URL}/storage/v1/object/public/photos/${p.photo}`
+      : "https://via.placeholder.com/120"
 
-    document.getElementById("photo").src = photoUrl || "https://via.placeholder.com/120"
-    document.getElementById("name").innerText = p.name
-    document.getElementById("person_id").innerText = p.person_id
-    document.getElementById("birthdate").innerText = p.birthdate
-    document.getElementById("gender").innerText = p.gender
-    document.getElementById("age").innerText = p.age
-    document.getElementById("address").innerText = p.address
-    document.getElementById("mobile").innerText = p.mobile
-    document.getElementById("email").innerText = p.email
+    document.getElementById("photo").src = photoUrl
+
+    // BASIC INFO
+    document.getElementById("name").innerText = p.name || "N/A"
+    document.getElementById("person_id").innerText = p.person_id || ""
+    document.getElementById("birthdate").innerText = p.birthdate || ""
+    document.getElementById("gender").innerText = p.gender || ""
+    document.getElementById("age").innerText = p.age || ""
+    document.getElementById("address").innerText = p.address || ""
+    document.getElementById("mobile").innerText = p.mobile || ""
+    document.getElementById("email").innerText = p.email || ""
 
     // BUTTON CLICK
     document.getElementById("trainingBtn").onclick = () => {
@@ -220,7 +221,7 @@ if (!personID) {
         return
       }
 
-      // LOAD ONCE ONLY
+      // LOAD ONLY ONCE
       if (loaded) return
       loaded = true
 
@@ -233,24 +234,26 @@ if (!personID) {
       .then(res => res.json())
       .then(data => {
 
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
           container.innerHTML = "<i>No trainings found</i>"
           return
         }
 
-        html += `
-  <div class="training-card">
-    <div class="training-title">${t.training_name}</div>
-    Trainer: ${t.trainer || 'N/A'}<br>
-    Start: ${t.date_started || 'N/A'}<br>
-    Completed: ${t.date_completed || 'N/A'}<br>
-    Status: ${t.status || 'N/A'}
-  </div>
-`
+        let html = ""
+
+        data.forEach(t => {
+          html += `
+            <div class="training-card">
+              <div class="training-title">${t.training_name}</div>
+              Trainer: ${t.trainer || 'N/A'}<br>
+              Start: ${t.date_started || 'N/A'}<br>
+              Completed: ${t.date_completed || 'N/A'}<br>
+              Status: ${t.status || 'N/A'}
+            </div>
+          `
         })
 
         container.innerHTML = html
-
       })
       .catch(err => {
         console.error(err)
@@ -258,6 +261,11 @@ if (!personID) {
       })
     }
 
+  })
+  .catch(err => {
+    console.error(err)
+    document.getElementById("card").innerHTML =
+      "<h3 style='color:red;'>Error loading ID</h3>"
   })
 }
 </script>
