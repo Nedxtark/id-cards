@@ -238,18 +238,15 @@ if (!personID) {
           return
         }
 
-        let html = ""
-
-        data.forEach(t => {
-          html += `
-            <div class="training-card">
-              <div class="training-title">${t.training_name}</div>
-              Trainer: ${t.trainer}<br>
-              Start: ${t.date_started}<br>
-              Completed: ${t.date_completed}<br>
-              Status: ${t.status}
-            </div>
-          `
+        html += `
+  <div class="training-card">
+    <div class="training-title">${t.training_name}</div>
+    Trainer: ${t.trainer || 'N/A'}<br>
+    Start: ${t.date_started || 'N/A'}<br>
+    Completed: ${t.date_completed || 'N/A'}<br>
+    Status: ${t.status || 'N/A'}
+  </div>
+`
         })
 
         container.innerHTML = html
