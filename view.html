@@ -22,8 +22,20 @@ body {
   border-radius: 14px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   overflow: hidden;
+  position: relative; /* ADD THIS */
 }
+/* ADD THIS BELOW .card */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
 
+  background: url('logo.png') no-repeat center;
+  background-size: 200px;
+
+  opacity: 0.08;
+  pointer-events: none;
+}
 /* HEADER */
 .header {
   background: #2c3e50;
