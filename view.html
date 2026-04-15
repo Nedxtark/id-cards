@@ -168,7 +168,7 @@ if (!personID) {
 } else {
 
   // ✅ USE ILIKE (handles Ñ vs N mismatch)
-  fetch(`${SUPABASE_URL}/rest/v1/ids?select=*`, {
+fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${encodeURIComponent(personID)}`, {
   headers: {
     "apikey": SUPABASE_KEY,
     "Authorization": "Bearer " + SUPABASE_KEY
@@ -190,14 +190,12 @@ if (!personID) {
     .replace(/ñ/g, "n")
     .trim()
 
-  const found = data.find(p => clean(p.person_id) === clean(personID))
-
-  if (!found) {
-    document.getElementById("card").innerHTML =
-      `<h3>ID not found</h3><small>${personID}</small>`
-    return
-  }
-
+  if (!data || data.length === 0) {
+  document.getElementById("card").innerHTML =
+    `<h3>ID not found</h3><small>${personID}</small>`
+  return
+}
+    
   const p = found
 
     const photoUrl = p.photo
