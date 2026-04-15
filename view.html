@@ -80,6 +80,9 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+.training-btn:hover {
+  background: #2980b9;
+}
 .training-container {
   display: none;
   margin-top: 10px;
@@ -132,12 +135,69 @@ body {
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"
 
-// GET ID FROM URL
 const params = new URLSearchParams(window.location.search)
 let personID = decodeURIComponent(params.get("id") || "").trim()
 
 let loaded = false
 
+// BUTTON (FIXED)
+document.getElementById("trainingBtn").onclick = () => {
+
+  const container = document.getElementById("trainingContainer")
+
+  if (container.style.display === "none" || container.style.display === "") {
+    container.style.display = "block"
+  } else {
+    container.style.display = "none"
+    return
+  }
+
+  if (!personID) {
+    container.innerHTML = "<span style='color:red;'>No ID provided</span>"
+    return
+  }
+
+  if (loaded) return
+  loaded = true
+
+  container.innerHTML = "Loading trainings..."
+
+  fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${encodeURIComponent(personID)}`, {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if (!data || data.length === 0) {
+      container.innerHTML = "<i>No trainings found</i>"
+      return
+    }
+
+    let html = ""
+
+    data.forEach(t => {
+      html += `
+        <div class="training-card">
+          <b>${t.training_name}</b><br>
+          Trainer: ${t.trainer || 'N/A'}<br>
+          Start: ${t.date_started || 'N/A'}<br>
+          Completed: ${t.date_completed || 'N/A'}<br>
+          Status: ${t.status || 'N/A'}
+        </div>
+      `
+    })
+
+    container.innerHTML = html
+  })
+  .catch(() => {
+    container.innerHTML = "<span style='color:red;'>Error loading trainings</span>"
+  })
+}
+
+// LOAD ID DATA
 if (!personID) {
   document.getElementById("card").innerHTML = "<h3>No ID provided</h3>"
 } else {
@@ -172,55 +232,6 @@ fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${encodeURIComponent(personID)}`
   document.getElementById("address").innerText = p.address || ""
   document.getElementById("mobile").innerText = p.mobile || ""
   document.getElementById("email").innerText = p.email || ""
-
-  document.getElementById("trainingBtn").onclick = () => {
-
-    const container = document.getElementById("trainingContainer")
-
-    if (container.style.display === "none" || container.style.display === "") {
-      container.style.display = "block"
-    } else {
-      container.style.display = "none"
-      return
-    }
-
-    if (loaded) return
-    loaded = true
-
-    fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${encodeURIComponent(p.person_id)}`, {
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-
-      if (!data || data.length === 0) {
-        container.innerHTML = "<i>No trainings found</i>"
-        return
-      }
-
-      let html = ""
-
-      data.forEach(t => {
-        html += `
-          <div class="training-card">
-            <b>${t.training_name}</b><br>
-            Trainer: ${t.trainer || 'N/A'}<br>
-            Start: ${t.date_started || 'N/A'}<br>
-            Completed: ${t.date_completed || 'N/A'}<br>
-            Status: ${t.status || 'N/A'}
-          </div>
-        `
-      })
-
-      container.innerHTML = html
-    })
-    .catch(() => {
-      container.innerHTML = "<span style='color:red;'>Error loading trainings</span>"
-    })
-  }
 
 })
 .catch(() => {
