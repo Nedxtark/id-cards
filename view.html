@@ -148,22 +148,18 @@ body {
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"
 
-// ✅ CLEAN FUNCTION (handles Ñ issue)
-function cleanID(id) {
-  if (!id) return ""
-  return id
-    .replace(/Ñ/g, "N")
-    .replace(/ñ/g, "n")
-    .trim()
+// ✅ SIMPLE + SAFE (no destructive cleaning)
+function normalizeID(id) {
+  return (id || "").trim()
 }
 
 // GET ID FROM URL
 const params = new URLSearchParams(window.location.search)
 let personID = params.get("id")
 
-// ✅ FIX ENCODING + CLEAN
+// Decode only (do NOT alter characters like Ñ)
 personID = decodeURIComponent(personID || "")
-personID = cleanID(personID)
+personID = normalizeID(personID)
 
 let loaded = false
 
@@ -171,7 +167,8 @@ if (!personID) {
   document.getElementById("card").innerHTML = "<h3>No ID provided</h3>"
 } else {
 
-  fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${personID}&select=*`, {
+  // ✅ USE ILIKE (handles Ñ vs N mismatch)
+  fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=ilike.*${personID}*&select=*`, {
     headers: {
       "apikey": SUPABASE_KEY,
       "Authorization": "Bearer " + SUPABASE_KEY
@@ -216,7 +213,7 @@ if (!personID) {
       if (loaded) return
       loaded = true
 
-      fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${p.person_id}&select=*`, {
+      fetch(`${SUPABASE_URL}/rest/v1/training?person_id=ilike.*${p.person_id}*&select=*`, {
         headers: {
           "apikey": SUPABASE_KEY,
           "Authorization": "Bearer " + SUPABASE_KEY
@@ -246,13 +243,13 @@ if (!personID) {
 
         container.innerHTML = html
       })
-      .catch(err => {
+      .catch(() => {
         container.innerHTML = "<span style='color:red;'>Error loading trainings</span>"
       })
     }
 
   })
-  .catch(err => {
+  .catch(() => {
     document.getElementById("card").innerHTML =
       "<h3 style='color:red;'>Error loading ID</h3>"
   })
