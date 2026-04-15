@@ -168,22 +168,37 @@ if (!personID) {
 } else {
 
   // ✅ USE ILIKE (handles Ñ vs N mismatch)
-  fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=ilike.*${personID}*&select=*`, {
-    headers: {
-      "apikey": SUPABASE_KEY,
-      "Authorization": "Bearer " + SUPABASE_KEY
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
+  fetch(`${SUPABASE_URL}/rest/v1/ids?select=*`, {
+  headers: {
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + SUPABASE_KEY
+  }
+})
+.then(res => res.json())
+.then(data => {
 
-    if (!data || data.length === 0) {
-      document.getElementById("card").innerHTML =
-        `<h3>ID not found</h3><small>${personID}</small>`
-      return
-    }
+  if (!data || data.length === 0) {
+    document.getElementById("card").innerHTML =
+      `<h3>No records found</h3>`
+    return
+  }
 
-    const p = data[0]
+  // ✅ NORMALIZE BOTH QR AND DATABASE
+  const clean = (val) => (val || "")
+    .toUpperCase()
+    .replace(/Ñ/g, "N")
+    .replace(/ñ/g, "n")
+    .trim()
+
+  const found = data.find(p => clean(p.person_id) === clean(personID))
+
+  if (!found) {
+    document.getElementById("card").innerHTML =
+      `<h3>ID not found</h3><small>${personID}</small>`
+    return
+  }
+
+  const p = found
 
     const photoUrl = p.photo
       ? `${SUPABASE_URL}/storage/v1/object/public/photos/${p.photo}`
