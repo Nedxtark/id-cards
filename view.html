@@ -144,13 +144,15 @@ let loaded = false
 document.getElementById("trainingBtn").onclick = () => {
 
   const container = document.getElementById("trainingContainer")
+  const isHidden = window.getComputedStyle(container).display === "none"
 
-  if (container.style.display === "none" || container.style.display === "") {
-    container.style.display = "block"
-  } else {
+  if (!isHidden) {
     container.style.display = "none"
+    loaded = false
     return
   }
+
+  container.style.display = "block"
 
   if (!personID) {
     container.innerHTML = "<span style='color:red;'>No ID provided</span>"
@@ -168,8 +170,13 @@ document.getElementById("trainingBtn").onclick = () => {
       "Authorization": "Bearer " + SUPABASE_KEY
     }
   })
-  .then(res => res.json())
+  .then(res => {
+    console.log("Status:", res.status)
+    return res.json()
+  })
   .then(data => {
+
+    console.log(data)
 
     if (!data || data.length === 0) {
       container.innerHTML = "<i>No trainings found</i>"
@@ -192,7 +199,8 @@ document.getElementById("trainingBtn").onclick = () => {
 
     container.innerHTML = html
   })
-  .catch(() => {
+  .catch(err => {
+    console.error(err)
     container.innerHTML = "<span style='color:red;'>Error loading trainings</span>"
   })
 }
