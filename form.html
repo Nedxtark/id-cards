@@ -205,6 +205,10 @@ input, select {
   gap: 10px;
   margin-top: 10px;
 }
+  #birthdate::placeholder {
+  color: #9ca3af; /* gray */
+  opacity: 1;
+}
 </style>
 </head>
 
@@ -226,7 +230,7 @@ input, select {
 
   <input id="name" placeholder="Full Name">
   <input id="person_id" placeholder="ID">
-  <input type="date" id="birthdate">
+  <input type="text" id="birthdate" placeholder="Birthdate">
   <input id="age" placeholder="Age">
 
   <select id="gender">
@@ -682,6 +686,17 @@ document.addEventListener("DOMContentLoaded", function () {
       searchData();
     }
   });
+  const birthInput = document.getElementById("birthdate");
+
+birthInput.addEventListener("focus", function () {
+  this.type = "date";
+});
+
+birthInput.addEventListener("blur", function () {
+  if (!this.value) {
+    this.type = "text";
+  }
+});
 
   // HIDE PROFILE ON LOAD
   document.getElementById("profile").style.display = "none";
