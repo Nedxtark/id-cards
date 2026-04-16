@@ -688,13 +688,24 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   const birthInput = document.getElementById("birthdate");
 
+// Focus → show date picker
 birthInput.addEventListener("focus", function () {
   this.type = "date";
 });
 
+// Blur → back to placeholder if empty
 birthInput.addEventListener("blur", function () {
   if (!this.value) {
     this.type = "text";
+  }
+});
+
+// Change → calculate age
+birthInput.addEventListener("change", function () {
+  const ageInput = document.getElementById("age");
+
+  if (this.value) {
+    ageInput.value = calculateAge(this.value);
   }
 });
 
