@@ -358,6 +358,13 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
+  (async function () {
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    window.location.href = "login.html";
+  }
+})();
 let currentID = null;
 
 function calculateAge(dateString) {
@@ -812,9 +819,10 @@ genderSelect.classList.add("placeholder");
   document.getElementById("profile").style.display = "none";
 
 }
-function logout() {
-  localStorage.removeItem("session"); // ✅ correct key
+async function logout() {
+  await supabase.auth.signOut();
   window.location.href = "login.html";
+}
 }
   
 
