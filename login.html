@@ -86,9 +86,13 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ================= SAFE AUTO REDIRECT ================= */
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  if (session && session.user) {
-    window.location.href = "form.html";
+window.addEventListener("load", async () => {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  const session = data?.session;
+
+  if (!error && session?.user) {
+    window.location.replace("form.html");
   }
 });
 
