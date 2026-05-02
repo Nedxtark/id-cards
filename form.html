@@ -798,8 +798,14 @@ genderSelect.classList.add("placeholder");
 }
 /* ================= LOGOUT ================= */
 async function logout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
+
+  // extra cleanup (IMPORTANT for your case)
+  localStorage.clear();
+  sessionStorage.clear();
+
   window.location.href = "login.html";
+}indow.location.href = "login.html";
 }
 </script>
 
