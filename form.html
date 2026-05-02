@@ -325,26 +325,22 @@ select.filled {
 
 </div>
   
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
-  // ✅ SAFE GLOBAL CLIENT (prevents duplicate declaration error)
+ // ✅ FIX: single instance only
 window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const supabase = window.supabaseClient;
+const sb = window.supabaseClient;
 
-  /* ================= AUTH PROTECTION ================= */
+/* AUTH CHECK */
 (async function () {
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    window.location.href = "login.html";
-  
-  }
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) window.location.href = "login.html";
 })();
-/* ================= STATE ================= */
+
 let currentID = null;
 
 /* ================= AGE ================= */
