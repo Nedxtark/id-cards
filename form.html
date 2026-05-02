@@ -800,12 +800,11 @@ genderSelect.classList.add("placeholder");
 async function logout() {
   await sb.auth.signOut();
 
-  // extra cleanup (IMPORTANT for your case)
   localStorage.clear();
   sessionStorage.clear();
 
-  window.location.href = "login.html";
-}window.location.href = "login.html";
+  window.location.replace("login.html");
+}
 </script>
 
 </body>
