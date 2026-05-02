@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  display: flex;
+  gap: 20px;
+}
+.card {
+  width: 220px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.card:hover {
+  transform: scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card" onclick="go('trucking')">
+    🚛<br><br>
+    Trucking & Forklift
+  </div>
+
+  <div class="card" onclick="go('training')">
+    👷<br><br>
+    Training Center
+  </div>
+
+  <div class="card" onclick="go('assessment')">
+    🧪<br><br>
+    Assessment Center
+  </div>
+
+</div>
+
+<script>
+function go(type) {
+  window.location.href = "form.html?division=" + type;
+}
+</script>
+
+</body>
+</html>
