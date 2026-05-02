@@ -357,15 +357,20 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
-  (async function () {
-  const { data } = await supabase.auth.getSession();
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  if (!data.session) {
+  /* ================= AUTH PROTECTION ================= */
+(async function () {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
     window.location.href = "login.html";
   }
 })();
+/* ================= STATE ================= */
 let currentID = null;
 
+/* ================= AGE ================= */
 function calculateAge(dateString) {
   const today = new Date();
   const birthDate = new Date(dateString);
@@ -373,13 +378,13 @@ function calculateAge(dateString) {
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
 
-  // Adjust if birthday hasn't happened yet this year
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
 
   return age;
 }
+/* ================= BUTTON STATE ================= */
 function updateButtonState() {
   const btn = document.getElementById("saveBtn");
   const idField = document.getElementById("person_id");
@@ -818,13 +823,11 @@ genderSelect.classList.add("placeholder");
   document.getElementById("profile").style.display = "none";
 
 }
+/* ================= LOGOUT ================= */
 async function logout() {
   await supabase.auth.signOut();
   window.location.href = "login.html";
 }
-}
-  
-
 </script>
 
 </body>
