@@ -6,18 +6,14 @@
 <title>Office Login</title>
 
 <style>
- body::before {
-  content: "";
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 400px; /* adjust size */
-  height: 400px;
-  background: url('wtfs.png') no-repeat center;
-  background-size: contain;
-  opacity: 0.08; /* 👈 adjust transparency here */
-  transform: translate(-50%, -50%);
-  z-index: 0;
+ .logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 120px;   /* adjust size */
+  height: auto;
 }
   * {
     box-sizing: border-box;
@@ -89,8 +85,9 @@
 
 <body>
 
-<div class="card">
-  <div class="title">Woo Trucking and Forlift Services</div>
+<div class="logo">
+  <img src="wtfs.png" alt="WTFS Logo">
+</div>
 
   <div class="input-group">
     <input id="username" placeholder="Username">
