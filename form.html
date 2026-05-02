@@ -326,7 +326,13 @@ select.filled {
 </div>
 
 <script>
-if (localStorage.getItem("loggedIn") !== "true") {
+const session = localStorage.getItem("session");
+
+try {
+  if (!session || atob(session) !== "office_logged_in") {
+    window.location.href = "login.html";
+  }
+} catch (e) {
   window.location.href = "login.html";
 }
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
