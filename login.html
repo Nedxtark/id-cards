@@ -6,9 +6,7 @@
 <title>Office Login</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     margin: 0;
@@ -25,8 +23,6 @@
     padding: 30px;
     width: 320px;
     border-radius: 12px;
-    position: relative;
-    z-index: 1;
   }
 
   .logo {
@@ -36,7 +32,6 @@
 
   .logo img {
     width: 180px;
-    height: auto;
   }
 
   .input-group {
@@ -50,25 +45,21 @@
     border: 1px solid #d1d5db;
     border-radius: 8px;
     font-size: 14px;
-    outline: none;
-    transition: 0.2s;
   }
 
   input:focus {
     border-color: #9ca3af;
+    outline: none;
   }
 
   button {
-    margin: 15px auto 0; /* center button */
-    display: block;
+    margin-top: 15px;
     padding: 12px;
     border: none;
     border-radius: 8px;
     background: #6b7280;
     color: white;
-    font-size: 14px;
     cursor: pointer;
-    transition: 0.2s;
   }
 
   button:hover {
@@ -86,7 +77,7 @@
   </div>
 
   <div class="input-group">
-    <input id="username" type="text" placeholder="Username">
+    <input id="username" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
   </div>
 
@@ -94,42 +85,24 @@
 
 </div>
 
-<script>
-  const USERNAME = "admin";
-  const PASSWORD = "Wtfs8706";
-
-  function login() {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-
-    if (!user || !pass) {
-      alert("Please enter username and password");
-      return;
-    }
-
-    if (user === USERNAME && pass === PASSWORD) {
-      localStorage.setItem("session", btoa("office_logged_in"));
-      window.location.href = "form.html";
-    } else {
-      alert("Invalid login");
-    }
-  }
-
-  // ENTER key triggers login (fixed)
-  document.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      login();
-    }
-  });
-</script>
+<!-- ✅ SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
-const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY"; // keep this (safe public key)
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"; // 🔥 PUT YOUR REAL KEY HERE
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 🔒 AUTO REDIRECT IF ALREADY LOGGED IN
+(async function () {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) {
+    window.location.replace("form.html");
+  }
+})();
+
+// ✅ LOGIN FUNCTION
 async function login() {
   const email = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -139,7 +112,7 @@ async function login() {
     return;
   }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
     password
   });
@@ -149,14 +122,15 @@ async function login() {
     return;
   }
 
-  // ✅ success
+  // ✅ SUCCESS
   window.location.href = "form.html";
 }
 
-// ENTER key
+// ✅ ENTER KEY SUPPORT
 document.addEventListener("keydown", function(e) {
   if (e.key === "Enter") login();
 });
 </script>
+
 </body>
 </html>
