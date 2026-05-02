@@ -810,7 +810,7 @@ genderSelect.classList.add("placeholder");
 
 }
 function logout() {
-  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("session"); // ✅ correct key
   window.location.href = "login.html";
 }
   
