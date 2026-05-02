@@ -326,15 +326,32 @@ select.filled {
 </div>
 
 <script>
-const session = localStorage.getItem("session");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-try {
-  if (!session || atob(session) !== "office_logged_in") {
+  const session = localStorage.getItem("session");
+
+  console.log("SESSION:", session);
+
+  if (!session) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const decoded = atob(session);
+    console.log("DECODED:", decoded);
+
+    if (decoded !== "office_logged_in") {
+      window.location.href = "login.html";
+    }
+
+  } catch (e) {
+    console.log("DECODE ERROR:", e);
     window.location.href = "login.html";
   }
-} catch (e) {
-  window.location.href = "login.html";
-}
+
+});  
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
