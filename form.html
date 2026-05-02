@@ -93,9 +93,9 @@ let currentID = null;
 
 /* ================= AUTH PROTECTION ================= */
 (async function () {
-  const { data } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
 
-  if (!data.session) {
+  if (error || !data.session) {
     window.location.replace("login.html");
   }
 })();
