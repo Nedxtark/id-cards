@@ -6,15 +6,6 @@
 <title>Office Login</title>
 
 <style>
- .logo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.logo img {
-  width: 120px;   /* adjust size */
-  height: auto;
-}
   * {
     box-sizing: border-box;
   }
@@ -29,21 +20,23 @@
     height: 100vh;
   }
 
-.card {
-  background: #ffffff;
-  padding: 30px;
-  width: 320px;
-  border-radius: 12px;
-  position: relative;
-  z-index: 1;
-}
+  .card {
+    background: #ffffff;
+    padding: 30px;
+    width: 320px;
+    border-radius: 12px;
+    position: relative;
+    z-index: 1;
+  }
 
-  .title {
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
+  .logo {
     text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .logo img {
+    width: 120px;
+    height: auto;
   }
 
   .input-group {
@@ -66,7 +59,8 @@
   }
 
   button {
-    margin-top: 15px;
+    margin: 15px auto 0; /* center button */
+    display: block;
     padding: 12px;
     border: none;
     border-radius: 8px;
@@ -85,16 +79,19 @@
 
 <body>
 
-<div class="logo">
-  <img src="wtfs.png" alt="WTFS Logo">
-</div>
+<div class="card">
+
+  <div class="logo">
+    <img src="wtfs.png" alt="WTFS Logo">
+  </div>
 
   <div class="input-group">
-    <input id="username" placeholder="Username">
+    <input id="username" type="text" placeholder="Username">
     <input id="password" type="password" placeholder="Password">
   </div>
 
   <button onclick="login()">Login</button>
+
 </div>
 
 <script>
@@ -118,10 +115,10 @@
     }
   }
 
-  // ENTER → go directly to form.html
+  // ENTER key triggers login (fixed)
   document.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
-      window.location.href = "form.html";
+      login();
     }
   });
 </script>
