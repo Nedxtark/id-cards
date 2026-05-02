@@ -83,20 +83,18 @@ button:hover {
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
-// ✅ FIX: correct v2 usage
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // auto redirect
-supabaseClient.auth.getSession().then(({ data }) => {
-  if (data.session) {
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
     window.location.href = "form.html";
   }
 });
 
-// login
 window.login = async function () {
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   const { error } = await supabaseClient.auth.signInWithPassword({
     email,
@@ -111,11 +109,7 @@ window.login = async function () {
   window.location.href = "form.html";
 };
 
-// enter key
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") login();
 });
 </script>
-
-</body>
-</html>
