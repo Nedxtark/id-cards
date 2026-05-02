@@ -82,16 +82,17 @@ button:hover {
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ✅ FIX: prevent redeclare crash
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ================= AUTO REDIRECT ================= */
-supabase.auth.getSession().then(({ data }) => {
+/* AUTO REDIRECT IF LOGGED IN */
+supabaseClient.auth.getSession().then(({ data }) => {
   if (data.session) {
     window.location.href = "form.html";
   }
 });
 
-/* ================= GLOBAL LOGIN FUNCTION ================= */
+/* GLOBAL LOGIN FUNCTION */
 window.login = async function () {
 
   const email = document.getElementById("username").value.trim();
@@ -102,7 +103,7 @@ window.login = async function () {
     return;
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
@@ -115,11 +116,9 @@ window.login = async function () {
   window.location.href = "form.html";
 };
 
-/* ================= ENTER KEY ================= */
+/* ENTER KEY SUPPORT */
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    window.login();
-  }
+  if (e.key === "Enter") window.login();
 });
 </script>
 
