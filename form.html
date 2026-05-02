@@ -328,6 +328,12 @@ select.filled {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+  const urlParams = new URLSearchParams(window.location.search);
+const division = urlParams.get("division");
+
+// OPTIONAL: show which module you're in
+console.log("Current module:", division);
+  
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
@@ -452,7 +458,8 @@ const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : nu
   photo,
   birth_cert: birth,
   school_record: school,
-  brgy_clearance: brgy
+  brgy_clearance: brgy,
+  division: division
 })
     });
 
@@ -480,12 +487,15 @@ const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : nu
 function searchData() {
   const q = searchID.value;
 
-  fetch(`${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)&order=name.asc`, {
-    headers: { 
-      apikey: SUPABASE_KEY, 
-      Authorization: "Bearer " + SUPABASE_KEY 
+   fetch(
+    `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`,
+    {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + SUPABASE_KEY
+      }
     }
-  })
+  )
   .then(r => r.json())
   .then(data => {
 
@@ -524,12 +534,15 @@ function searchData() {
 }
 
 function loadByID(id) {
-  fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`, {
-    headers: { 
-      apikey: SUPABASE_KEY, 
-      Authorization: "Bearer " + SUPABASE_KEY 
+ fetch(
+  `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`,
+  {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY
     }
-  })
+  }
+)
   .then(r => r.json())
   .then(d => {
     if (!d.length) return;
