@@ -358,9 +358,9 @@ function searchData() {
 
   let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
-  if (division) {
-    url = `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
-  }
+if (division) {
+  url = `${SUPABASE_URL}/rest/v1/ids?and=(lower(division).eq.${division.toLowerCase()},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
+}
 
   fetch(url, {
     headers: {
