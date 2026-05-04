@@ -328,11 +328,22 @@ select.filled {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  const urlParams = new URLSearchParams(window.location.search);
-const division = urlParams.get("division");
+// ✅ DIVISION SETUP (PUT THIS AT THE TOP)
+let division = localStorage.getItem("division");
 
-// OPTIONAL: show which module you're in
-console.log("Current module:", division);
+const urlParams = new URLSearchParams(window.location.search);
+const urlDivision = urlParams.get("division");
+
+if (urlDivision) {
+  division = urlDivision;
+  localStorage.setItem("division", urlDivision);
+}
+
+console.log("ACTIVE DIVISION:", division);
+
+// 🔽 KEEP THE REST OF YOUR CODE BELOW
+const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
+const SUPABASE_KEY = "YOUR_KEY_HERE";
   
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
