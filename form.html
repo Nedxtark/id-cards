@@ -412,7 +412,9 @@ function loadByID(id) {
     currentID = u.person_id;
 
     profile.style.display = "block";
-
+    // 👉 QR CODE HERE
+    document.getElementById("d_qr").src =
+  `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(u.person_id)}`;
     document.getElementById("d_name").innerText = u.name;
     document.getElementById("d_id").innerText = u.person_id;
     document.getElementById("d_age").innerText = u.age;
