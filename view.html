@@ -153,8 +153,17 @@ document.addEventListener("DOMContentLoaded", function () {
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"
 
-const params = new URLSearchParams(window.location.search)
-let personID = decodeURIComponent(params.get("id") || "").trim()
+const params = new URLSearchParams(window.location.search);
+
+let personID = params.get("id");
+let division = params.get("division") || "trucking";
+
+personID = decodeURIComponent(personID || "").trim();
+  let table = "ids_trucking";
+
+if (division === "training") {
+  table = "ids_training";
+}
 
 let loaded = false
 
@@ -231,7 +240,7 @@ if (!personID) {
   document.getElementById("card").innerHTML = "<h3>No ID provided</h3>"
 } else {
 
-fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${encodeURIComponent(personID)}`, {
+fetch(`${SUPABASE_URL}/rest/v1/${table}?person_id=eq.${encodeURIComponent(personID)}`, {
   headers: {
     "apikey": SUPABASE_KEY,
     "Authorization": "Bearer " + SUPABASE_KEY
