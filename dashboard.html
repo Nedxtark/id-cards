@@ -62,11 +62,10 @@ body {
 
 <script>
 function go(type) {
-
-  // ✅ Normalize values (IMPORTANT)
   type = type.toLowerCase();
 
-  localStorage.setItem("division", type);
+  localStorage.setItem("division", type); // trucking / training
+
   window.location.href = "form.html";
 }
 </script>
