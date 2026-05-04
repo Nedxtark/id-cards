@@ -92,7 +92,7 @@ window.addEventListener("load", async () => {
   const session = data?.session;
 
   if (!error && session?.user) {
-    window.location.replace("form.html");
+    window.location.replace("dashboard.html");
   }
 });
 
@@ -111,7 +111,7 @@ window.login = async function () {
     return;
   }
 
-  window.location.href = "form.html";
+  window.location.href = "dashboard.html";
 };
 
 /* ================= ENTER KEY LOGIN ================= */
