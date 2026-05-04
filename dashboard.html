@@ -48,8 +48,6 @@ body {
 
 <body>
 
-<div class="container">
-
   <div class="container">
 
   <div class="card" onclick="go('trucking')">
@@ -64,8 +62,12 @@ body {
 
 <script>
 function go(type) {
-  localStorage.setItem("division", type); // ✅ save division
-  window.location.href = "form.html";     // ✅ go to form
+
+  // ✅ Normalize values (IMPORTANT)
+  type = type.toLowerCase();
+
+  localStorage.setItem("division", type);
+  window.location.href = "form.html";
 }
 </script>
 
