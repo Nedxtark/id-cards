@@ -365,7 +365,7 @@ let currentID = null;
 function searchData() {
   const q = document.getElementById("searchID").value || "";
 
-  let url = `${SUPABASE_URL}/rest/v1/${TABLE}?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
+ let url = `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
   fetch(url, {
     headers: {
@@ -428,25 +428,35 @@ function loadByID(id) {
 async function saveData() {
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
 
-  await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+  const payload = {
+    name: document.getElementById("name").value,
+    person_id: id,
+    birthdate: document.getElementById("birthdate").value,
+    age: document.getElementById("age").value,
+    gender: document.getElementById("gender").value,
+    address: document.getElementById("address").value,
+    mobile: document.getElementById("mobile").value,
+    email: document.getElementById("email").value
+  };
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
     method: "POST",
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
     },
-    body: JSON.stringify({
-      name: document.getElementById("name").value,
-      person_id: id,
-      birthdate: document.getElementById("birthdate").value,
-      age: document.getElementById("age").value,
-      gender: document.getElementById("gender").value,
-      address: document.getElementById("address").value,
-      mobile: document.getElementById("mobile").value,
-      email: document.getElementById("email").value,
-      division: division
-    })
+    body: JSON.stringify(payload)
   });
+
+  const text = await res.text();
+  console.log("SUPABASE ERROR/RESPONSE:", text);
+
+  if (!res.ok) {
+    alert("Save failed: " + text);
+    return;
+  }
 
   alert("Saved!");
   loadByID(id);
