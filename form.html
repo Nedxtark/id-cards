@@ -325,37 +325,46 @@ select.filled {
 
 </div>
   
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
-// ✅ SAFE CLIENT
+// ✅ CLIENT
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ✅ DIVISION
+let division = localStorage.getItem("division");
+
+if (division === "null" || division === "undefined" || !division) {
+  division = "trucking";
+}
+
+// ✅ TABLE SWITCH
+let TABLE = "ids_trucking";
+
+if (division === "training") {
+  TABLE = "ids_training";
+}
+
+console.log("USING TABLE:", TABLE);
 
 // ✅ ELEMENTS
 const results = document.getElementById("results");
 const profile = document.getElementById("profile");
 
-// ✅ AUTH CHECK
+let currentID = null;
+
+// ✅ AUTH
 (async () => {
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) window.location.href = "login.html";
 })();
 
-let currentID = null;
-
 // ✅ SEARCH
 function searchData() {
   const q = document.getElementById("searchID").value || "";
 
-  let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
-
-  // ✅ FILTER BY DIVISION
-  if (division) {
-    url = `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
-  }
+  let url = `${SUPABASE_URL}/rest/v1/${TABLE}?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
   fetch(url, {
     headers: {
@@ -381,14 +390,9 @@ function searchData() {
   });
 }
 
-// ✅ LOAD RECORD
+// ✅ LOAD
 function loadByID(id) {
-  let url = `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`;
-
-  // ✅ FILTER HERE TOO
-  if (division) {
-    url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`;
-  }
+  let url = `${SUPABASE_URL}/rest/v1/${TABLE}?person_id=eq.${id}`;
 
   fetch(url, {
     headers: {
@@ -399,7 +403,7 @@ function loadByID(id) {
   .then(r => r.json())
   .then(d => {
     if (!d.length) {
-      alert("No record found in this division");
+      alert("No record found");
       return;
     }
 
@@ -413,11 +417,12 @@ function loadByID(id) {
     document.getElementById("d_age").innerText = u.age;
   });
 }
-// ✅ SAVE
+
+// ✅ SAVE (FULL FIELDS)
 async function saveData() {
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
 
-  await fetch(`${SUPABASE_URL}/rest/v1/ids`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
     method: "POST",
     headers: {
       apikey: SUPABASE_KEY,
@@ -427,19 +432,25 @@ async function saveData() {
     body: JSON.stringify({
       name: document.getElementById("name").value,
       person_id: id,
+      birthdate: document.getElementById("birthdate").value,
       age: document.getElementById("age").value,
-      division: division   // ✅ IMPORTANT
+      gender: document.getElementById("gender").value,
+      address: document.getElementById("address").value,
+      mobile: document.getElementById("mobile").value,
+      email: document.getElementById("email").value,
+      division: division
     })
   });
 
   alert("Saved!");
+  loadByID(id);
 }
 
-// ✅ DELETE
+// ✅ DELETE (FIXED)
 async function deleteRecord() {
   if (!confirm("Delete?")) return;
 
-  await fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${currentID}`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?person_id=eq.${currentID}`, {
     method: "DELETE",
     headers: {
       apikey: SUPABASE_KEY,
@@ -463,6 +474,3 @@ function clearForm() {
   document.querySelectorAll("input").forEach(i => i.value = "");
 }
 </script>
-
-</body>
-</html>
