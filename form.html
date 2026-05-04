@@ -152,8 +152,17 @@ input, select {
   margin-top: 10px;
 }
 #results {
-  max-width: 500px;
-  margin: 8px auto;
+  position: absolute;
+  top: 55px;   /* adjust if needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
 }
 
 .result {
@@ -169,6 +178,22 @@ input, select {
 .result-id {
   color: #9ca3af;
   font-size: 12px;
+}
+  .result-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  background: white;
+}
+
+.result-item:hover,
+.result-item.active {
+  background: #e5e7eb;
+}
+
+.result-sub {
+  font-size: 12px;
+  color: #6b7280;
 }
 .doc-row { font-size: 12px; }
 .doc-text a { color: #2563eb; text-decoration: none; }
@@ -221,11 +246,47 @@ select.filled {
   .doc-text a:hover {
   text-decoration: underline;
 }
+  .result-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  background: white;
+}
+
+.result-item:hover {
+  background: #f3f4f6;
+}
+
+.result-sub {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+#results {
+  position: absolute;
+  width: 500px;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+  .search-box-wrapper {
+  position: relative;
+  width: 500px;
+}
 </style>
 </head>
 
 <body>
-
+<div class="search-box-wrapper">
+  <div class="search-box">
+    <input id="searchID" placeholder="Search Name or ID">
+    <button onclick="searchData()">Search</button>
+  </div>
+  <div id="results"></div>
+</div>
 <div class="topbar">
   <div class="search-box">
     <input id="searchID" placeholder="Search Name or ID">
@@ -384,9 +445,18 @@ function searchData() {
 
     data.forEach(u => {
       const div = document.createElement("div");
-      div.innerHTML = `<b>${u.name}</b> (${u.person_id})`;
-      div.onclick = () => loadByID(u.person_id);
-      results.appendChild(div);
+div.className = "result-item";
+div.innerHTML = `
+  <div><b>${u.name}</b></div>
+  <div class="result-sub">${u.person_id}</div>
+`;
+
+div.onclick = () => {
+  loadByID(u.person_id);
+  results.innerHTML = ""; // close dropdown after selection
+};
+
+results.appendChild(div);
     });
   });
 }
