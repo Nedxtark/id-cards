@@ -328,7 +328,13 @@ select.filled {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ✅ DIVISION SETUP (PUT THIS AT THE TOP)
+/* ================= SUPABASE ================= */
+const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
+const SUPABASE_KEY = "YOUR_KEY";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ================= DIVISION ================= */
 let division = localStorage.getItem("division");
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -340,20 +346,14 @@ if (urlDivision) {
 }
 
 console.log("ACTIVE DIVISION:", division);
-  
-const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
- // ✅ FIX: single instance only
-window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const sb = window.supabaseClient;
-
-/* AUTH CHECK */
+/* ================= AUTH ================= */
 (async function () {
-  const { data: { session } } = await sb.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (!session) window.location.href = "login.html";
 })();
 
+/* ================= STATE ================= */
 let currentID = null;
 
 /* ================= AGE ================= */
@@ -370,7 +370,8 @@ function calculateAge(dateString) {
 
   return age;
 }
-/* ================= BUTTON STATE ================= */
+
+/* ================= BUTTON ================= */
 function updateButtonState() {
   const btn = document.getElementById("saveBtn");
   const idField = document.getElementById("person_id");
@@ -383,7 +384,8 @@ function updateButtonState() {
     idField.disabled = false;
   }
 }
-/* UPLOAD */
+
+/* ================= UPLOAD ================= */
 async function uploadFile(file, folder, name) {
   if (!file) return null;
 
@@ -396,26 +398,24 @@ async function uploadFile(file, folder, name) {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY,
       "x-upsert": "true",
-      "Content-Type": file.type   // ✅ IMPORTANT FIX
+      "Content-Type": file.type
     },
     body: file
   });
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("UPLOAD ERROR:", err);
-alert("UPLOAD ERROR: " + err);
-throw new Error(err);
+    alert("UPLOAD ERROR: " + err);
+    throw new Error(err);
   }
 
   return path;
 }
 
-/* SAVE */
+/* ================= SAVE ================= */
 async function saveData() {
   try {
 
-    // IF EDITING → UPDATE
     if (currentID) {
       await updateRecord();
       return;
@@ -423,29 +423,21 @@ async function saveData() {
 
     let id = document.getElementById("person_id").value;
 
-    // AUTO GENERATE ID
     if (!id) {
       id = "ID-" + Date.now();
       document.getElementById("person_id").value = id;
     }
 
-    const photoFile = document.getElementById("photo").files[0];
-    const birthFile = document.getElementById("birth_cert").files[0];
-    const schoolFile = document.getElementById("school_record").files[0];
-    const brgyFile = document.getElementById("brgy_clearance").files[0];
+    const photoFile = photo.files[0];
+    const birthFile = birth_cert.files[0];
+    const schoolFile = school_record.files[0];
+    const brgyFile = brgy_clearance.files[0];
 
-
-    // DEBUG
-    console.log({ birthFile, schoolFile, brgyFile });
-
-    // UPLOAD
     const photo = photoFile ? await uploadFile(photoFile, "photos", id+"_photo") : null;
-const birth = birthFile ? await uploadFile(birthFile, "documents", id+"_birth") : null;
-const school = schoolFile ? await uploadFile(schoolFile, "documents", id+"_school") : null;
-const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : null;
-    console.log({ birth, school, brgy });
+    const birth = birthFile ? await uploadFile(birthFile, "documents", id+"_birth") : null;
+    const school = schoolFile ? await uploadFile(schoolFile, "documents", id+"_school") : null;
+    const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : null;
 
-    // SAVE TO DB
     const res = await fetch(`${SUPABASE_URL}/rest/v1/ids`, {
       method: "POST",
       headers: {
@@ -454,36 +446,28 @@ const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : nu
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: document.getElementById("name").value,
-  person_id: id,
-  birthdate: document.getElementById("birthdate").value,
-  age: document.getElementById("age").value,
-  gender: document.getElementById("gender").value,
-  address: document.getElementById("address").value,
-  mobile: document.getElementById("mobile").value,
-  email: document.getElementById("email").value,
-  photo,
-  birth_cert: birth,
-  school_record: school,
-  brgy_clearance: brgy,
-  division: division
-})
+        name: name.value,
+        person_id: id,
+        birthdate: birthdate.value,
+        age: age.value,
+        gender: gender.value,
+        address: address.value,
+        mobile: mobile.value,
+        email: email.value,
+        photo,
+        birth_cert: birth,
+        school_record: school,
+        brgy_clearance: brgy,
+        division: division || null
+      })
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      console.error(err);
       alert("Error saving!");
       return;
     }
 
     alert("Saved!");
-
-    // QR
-    const qrData = `https://nedxtark.github.io/id-cards/view.html?id=${id}`;
-    document.getElementById("d_qr").src =
-      `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
-
     loadByID(id);
 
   } catch (err) {
@@ -491,11 +475,13 @@ const brgy = brgyFile ? await uploadFile(brgyFile, "documents", id+"_brgy") : nu
     alert("Error occurred");
   }
 }
+
+/* ================= SEARCH ================= */
 function searchData() {
   const q = searchID.value;
 
-   fetch(
-    `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`,
+  fetch(
+    `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`,
     {
       headers: {
         apikey: SUPABASE_KEY,
@@ -507,18 +493,15 @@ function searchData() {
   .then(data => {
 
     if (!data.length) {
-  alert("No record");
+      alert("No record");
+      profile.style.display = "none";
+      currentID = null;
+      updateButtonState();
+      return;
+    }
 
-  document.getElementById("profile").style.display = "none";
-  currentID = null;
-  updateButtonState();
-
-  return;
-}
-
-    const container = document.getElementById("results");
-    container.style.display = "block"; // ✅ SHOW RESULTS
-    container.innerHTML = "";
+    results.style.display = "block";
+    results.innerHTML = "";
 
     data.forEach(u => {
       const div = document.createElement("div");
@@ -531,25 +514,26 @@ function searchData() {
 
       div.onclick = () => {
         loadByID(u.person_id);
-        container.style.display = "none";
+        results.style.display = "none";
       };
 
-      container.appendChild(div);
+      results.appendChild(div);
     });
 
   });
 }
 
+/* ================= LOAD ================= */
 function loadByID(id) {
- fetch(
-  `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`,
-  {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: "Bearer " + SUPABASE_KEY
+  fetch(
+    `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`,
+    {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + SUPABASE_KEY
+      }
     }
-  }
-)
+  )
   .then(r => r.json())
   .then(d => {
     if (!d.length) return;
@@ -569,127 +553,49 @@ function loadByID(id) {
     d_mobile.innerText = u.mobile;
     d_email.innerText = u.email;
 
-    // QR CODE GENERATION
-const qrData = `https://nedxtark.github.io/id-cards/view.html?id=${u.person_id}`;
-d_qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+    d_qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(id)}`;
 
-    const link = (f, folder = "documents") => {
-  if (!f || f === "null") {
-    return "<span style='color:#9ca3af'>No file uploaded</span>";
-  }
+    const link = (f, folder="documents") =>
+      f ? `<a href="${SUPABASE_URL}/storage/v1/object/public/${folder}/${f}" target="_blank">View</a>`
+        : "<span style='color:#9ca3af'>No file</span>";
 
-  return `<a href="${SUPABASE_URL}/storage/v1/object/public/${folder}/${f}?t=${Date.now()}" target="_blank">View</a>`;
-};
-
-  d_birth_cert.innerHTML = link(u.birth_cert);
-d_school.innerHTML = link(u.school_record);
-d_brgy.innerHTML = link(u.brgy_clearance);
-
-    // STORE CURRENT FILE VALUES
-d_birth_cert.dataset.file = u.birth_cert;
-d_school.dataset.file = u.school_record;
-d_brgy.dataset.file = u.brgy_clearance;
+    d_birth_cert.innerHTML = link(u.birth_cert);
+    d_school.innerHTML = link(u.school_record);
+    d_brgy.innerHTML = link(u.brgy_clearance);
 
     photoView.src = u.photo
       ? `${SUPABASE_URL}/storage/v1/object/public/photos/${u.photo}`
       : "https://via.placeholder.com/120";
   });
 }
-/* EDIT */
-function editRecord() {
-  name.value = d_name.innerText;
-  person_id.value = d_id.innerText;
-  birthdate.value = d_birth.innerText;
-  age.value = d_age.innerText;
-  gender.value = d_gender.innerText;
-  if (gender.value) {
-  gender.classList.remove("placeholder");
-  gender.classList.add("filled");
-}
-  address.value = d_address.innerText;
-  mobile.value = d_mobile.innerText;
-  email.value = d_email.innerText;
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-/* UPDATE */
+/* ================= UPDATE ================= */
 async function updateRecord() {
-
- const photoFile = document.getElementById("photo").files[0];
-const birthFile = document.getElementById("birth_cert").files[0];
-const schoolFile = document.getElementById("school_record").files[0];
-const brgyFile = document.getElementById("brgy_clearance").files[0];
-
-console.log({
-  photoFile,
-  birthFile,
-  schoolFile,
-  brgyFile
-});
-let photo = null, birth = null, school = null, brgy = null;
-
-if (photoFile) {
-  photo = await uploadFile(photoFile, "photos", currentID+"_photo");
-}
-
-if (birthFile) {
-  birth = await uploadFile(birthFile, "documents", currentID+"_birth");
-}
-
-if (schoolFile) {
-  school = await uploadFile(schoolFile, "documents", currentID+"_school");
-}
-
-if (brgyFile) {
-  brgy = await uploadFile(brgyFile, "documents", currentID+"_brgy");
-}
   const data = {
-  name: document.getElementById("name").value,
-  birthdate: birthdate.value,
-  age: age.value,
-  gender: gender.value,
-  address: address.value,
-  mobile: mobile.value,
-  email: email.value
-};
+    name: name.value,
+    birthdate: birthdate.value,
+    age: age.value,
+    gender: gender.value,
+    address: address.value,
+    mobile: mobile.value,
+    email: email.value
+  };
 
-  if (photo) data.photo = photo;
-
- if (birth !== null) {
-  data.birth_cert = birth;
-} else if (d_birth_cert.dataset.file !== undefined) {
-  data.birth_cert = d_birth_cert.dataset.file;
-}
-
-if (school !== null) {
-  data.school_record = school;
-} else if (d_school.dataset.file !== undefined) {
-  data.school_record = d_school.dataset.file;
-}
-
-if (brgy !== null) {
-  data.brgy_clearance = brgy;
-} else if (d_brgy.dataset.file !== undefined) {
-  data.brgy_clearance = d_brgy.dataset.file;
-}
-console.log("FINAL DATA:", data);
-
-await fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${currentID}`, {
-  method: "PATCH",
-  headers: {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + SUPABASE_KEY,
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(data)
-});
+  await fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${currentID}`, {
+    method: "PATCH",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
 
   alert("Updated!");
-loadByID(currentID);
+  loadByID(currentID);
 }
 
-/* DELETE */
+/* ================= DELETE ================= */
 async function deleteRecord() {
   if (!confirm("Delete this record?")) return;
 
@@ -704,128 +610,11 @@ async function deleteRecord() {
   alert("Deleted!");
   profile.style.display = "none";
 }
-function openTraining() {
-  if (!currentID) {
-    alert("Load a profile first");
-    return;
-  }
 
-  window.open(`training.html?id=${currentID}`, "_blank");
-}
-document.addEventListener("DOMContentLoaded", function () {
-
-  // SEARCH INPUT CLEAR
-  document.getElementById("searchID").addEventListener("input", function () {
-    const container = document.getElementById("results");
-
-    if (this.value.trim() === "") {
-      container.innerHTML = "";
-      container.style.display = "none";
-    }
-  });
-
-  // ✅ BIRTHDATE → AUTO AGE
-  document.getElementById("birthdate").addEventListener("change", function () {
-    const ageInput = document.getElementById("age");
-
-    if (this.value) {
-      ageInput.value = calculateAge(this.value);
-    } else {
-      ageInput.value = "";
-    }
-  });
-  // ✅ GENDER COLOR CONTROL
-  const genderSelect = document.getElementById("gender");
-// Reset gender value
-genderSelect.value = "";
-
-// Reset style back to placeholder (gray)
-genderSelect.classList.remove("filled");
-genderSelect.classList.add("placeholder");
-  genderSelect.addEventListener("change", function () {
-    if (this.value !== "") {
-      this.classList.remove("placeholder");
-      this.classList.add("filled");
-    }
-  });
-
-  // ENTER KEY SEARCH
-  document.getElementById("searchID").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchData();
-    }
-  });
-  const birthInput = document.getElementById("birthdate");
-
-// Focus → show date picker
-birthInput.addEventListener("focus", function () {
-  this.type = "date";
-});
-
-// Blur → back to placeholder if empty
-birthInput.addEventListener("blur", function () {
-  if (!this.value) {
-    this.type = "text";
-  }
-});
-
-// Change → calculate age
-birthInput.addEventListener("change", function () {
-  const ageInput = document.getElementById("age");
-
-  if (this.value) {
-    ageInput.value = calculateAge(this.value);
-  }
-});
-
-  // HIDE PROFILE ON LOAD
-  document.getElementById("profile").style.display = "none";
-
-});
-
-function clearForm() {
-
-  // Clear text fields
-  document.getElementById("name").value = "";
-  document.getElementById("person_id").value = "";
-  document.getElementById("birthdate").value = "";
-  document.getElementById("age").value = "";
- const genderSelect = document.getElementById("gender");
-// ✅ RESET VALUE
-genderSelect.value = "";
-
-// ✅ RESET COLOR BACK TO PLACEHOLDER
-genderSelect.classList.remove("filled");
-genderSelect.classList.add("placeholder");
-  document.getElementById("address").value = "";
-  document.getElementById("mobile").value = "";
-  document.getElementById("email").value = "";
-
-  // Clear file inputs
-  document.getElementById("photo").value = "";
-  document.getElementById("birth_cert").value = "";
-  document.getElementById("school_record").value = "";
-  document.getElementById("brgy_clearance").value = "";
-
-  // Reset state
-  currentID = null;
-  updateButtonState();
-
-  // Hide profile display
-  document.getElementById("profile").style.display = "none";
-
-}
 /* ================= LOGOUT ================= */
 async function logout() {
-  await sb.auth.signOut();
-
+  await supabase.auth.signOut();
   localStorage.clear();
-  sessionStorage.clear();
-
   window.location.replace("login.html");
 }
 </script>
-
-</body>
-</html>
