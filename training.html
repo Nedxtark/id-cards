@@ -263,7 +263,9 @@ let selectedTrainingID = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const personID = urlParams.get("id");
-
+if (!personID) {
+  alert("No person selected");
+}
 /* LOAD */
 function loadTraining() {
   fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${personID}&order=date_started.desc`, {
