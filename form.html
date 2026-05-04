@@ -459,7 +459,11 @@ async function saveData() {
     alert("Save failed: " + text);
     return;
   }
+ // ✅ QR GENERATION (PUT IT HERE)
+  const qrLink = `${window.location.origin}/view.html?id=${encodeURIComponent(id)}`;
 
+  document.getElementById("d_qr").src =
+    `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrLink)}`;
   alert("Saved!");
   loadByID(id);
 }
