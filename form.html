@@ -296,8 +296,9 @@ select.filled {
 
   <input id="name" placeholder="Full Name">
   <input id="person_id" placeholder="ID">
-<label>Date</label>
-<input type="date" id="birthdate">
+  <input type="text" id="birthdate" placeholder="Date"
+       onfocus="this.type='date'; this.showPicker();"
+       onblur="if(!this.value){this.type='text'}">
   <input id="age" placeholder="Age">
 
   <select id="gender" class="placeholder">
