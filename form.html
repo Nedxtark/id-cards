@@ -699,8 +699,11 @@ function clearForm() {
 }
 
   // if click is outside search area → hide dropdown
-  if (!searchBox.contains(e.target)) {
-    results.innerHTML = "";
+  document.addEventListener("click", function (e) {
+  const searchWrapper = document.querySelector(".search-wrapper");
+
+  if (searchWrapper && !searchWrapper.contains(e.target)) {
+    document.getElementById("results").innerHTML = "";
   }
-});  
+});
 </script>
