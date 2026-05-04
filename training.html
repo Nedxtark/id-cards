@@ -266,6 +266,23 @@ const personID = urlParams.get("id");
 if (!personID) {
   alert("No person selected");
 }
+  const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+
+async function protectPage() {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: "Bearer " + localStorage.getItem("sb-access-token")
+    }
+  });
+
+  if (!res.ok) {
+    window.location.href = "login.html";
+  }
+}
+
+protectPage();
 /* LOAD */
 function loadTraining() {
   fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${personID}&order=date_started.desc`, {
