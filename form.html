@@ -544,6 +544,22 @@ document.getElementById("photo").addEventListener("change", function (e) {
 
   reader.readAsDataURL(file);
 });
+  document.getElementById("birthdate").addEventListener("input", function () {
+  const birthValue = this.value;
+  if (!birthValue) return;
+
+  const birthDate = new Date(birthValue);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  document.getElementById("age").value = age;
+});
 // ✅ DELETE (FIXED)
 async function deleteRecord() {
   if (!confirm("Delete?")) return;
