@@ -24,12 +24,12 @@ body {
   position: relative;
 }
 
-/* 🔥 FIX: allow clicks through overlay */
+/* ✅ UPDATED: dynamic logo */
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('logo.png') no-repeat center;
+  background: var(--card-logo) no-repeat center;
   background-size: 350px;
   opacity: 0.15;
   pointer-events: none;
@@ -159,10 +159,21 @@ let personID = params.get("id");
 let division = params.get("division") || "trucking";
 
 personID = decodeURIComponent(personID || "").trim();
-  let table = "ids_trucking";
+let table = "ids_trucking";
 
 if (division === "training") {
   table = "ids_training";
+}
+
+/* ✅ NEW: SET LOGO BASED ON DIVISION */
+const card = document.getElementById("card");
+
+if (division === "trucking") {
+  card.style.setProperty('--card-logo', "url('wfts.png')");
+} else if (division === "training") {
+  card.style.setProperty('--card-logo', "url('logo.png')");
+} else {
+  card.style.setProperty('--card-logo', "url('logo.png')");
 }
 
 let loaded = false
@@ -170,7 +181,6 @@ let loaded = false
 const trainingBtn = document.getElementById("trainingBtn")
 const container = document.getElementById("trainingContainer")
 
-// ✅ BUTTON WORKING
 trainingBtn.onclick = () => {
 
   const isHidden = window.getComputedStyle(container).display === "none"
@@ -199,13 +209,8 @@ trainingBtn.onclick = () => {
       "Authorization": "Bearer " + SUPABASE_KEY
     }
   })
-  .then(res => {
-    console.log("STATUS:", res.status)
-    return res.json()
-  })
+  .then(res => res.json())
   .then(data => {
-
-    console.log("TRAINING DATA:", data)
 
     if (!data || data.length === 0) {
       container.innerHTML = "<i>No trainings found</i>"
@@ -228,8 +233,7 @@ trainingBtn.onclick = () => {
 
     container.innerHTML = html
   })
-  .catch(err => {
-    console.error(err)
+  .catch(() => {
     container.innerHTML = "<span style='color:red;'>Error loading trainings</span>"
   })
 }
