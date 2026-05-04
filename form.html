@@ -410,8 +410,14 @@ function loadByID(id) {
 
     const u = d[0];
     currentID = u.person_id;
-
     profile.style.display = "block";
+    
+   const photoUrl = u.photo
+  ? `${SUPABASE_URL}/storage/v1/object/public/photos/${u.photo}`
+  : "https://via.placeholder.com/120";
+
+  document.getElementById("photoView").src = photoUrl;
+    
     const repo = "https://nedxtark.github.io/view.html?id";
     const qrLink = `${window.location.origin}/id-cards/view.html?id=${encodeURIComponent(u.person_id)}&division=${division}`;
 
@@ -463,7 +469,18 @@ async function saveData() {
   }
 
 }
+document.getElementById("photo").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    document.getElementById("photoView").src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
+});
 // ✅ DELETE (FIXED)
 async function deleteRecord() {
   if (!confirm("Delete?")) return;
