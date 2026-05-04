@@ -87,11 +87,10 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ================= SAFE AUTO REDIRECT ================= */
 window.addEventListener("load", async () => {
-  const { data, error } = await supabaseClient.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  const session = data?.session;
-
-  if (!error && session?.user) {
+  // Only redirect if session is REALLY valid
+  if (session && session.access_token) {
     window.location.replace("dashboard.html");
   }
 });
