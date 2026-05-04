@@ -64,7 +64,8 @@ body {
 
 <script>
 function go(type) {
-  window.location.href = "form.html?division=" + type;
+  localStorage.setItem("division", type); // ✅ save division
+  window.location.href = "form.html";     // ✅ go to form
 }
 </script>
 
