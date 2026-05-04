@@ -348,9 +348,16 @@ let currentID = null;
 
 // ✅ SEARCH
 function searchData() {
-  const q = document.getElementById("searchID").value;
+  const q = document.getElementById("searchID").value || "";
 
-  fetch(`${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`, {
+  let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
+
+  // ✅ FILTER BY DIVISION
+  if (division) {
+    url = `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
+  }
+
+  fetch(url, {
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY
@@ -376,7 +383,14 @@ function searchData() {
 
 // ✅ LOAD RECORD
 function loadByID(id) {
-  fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`, {
+  let url = `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`;
+
+  // ✅ FILTER HERE TOO
+  if (division) {
+    url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`;
+  }
+
+  fetch(url, {
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY
@@ -384,7 +398,10 @@ function loadByID(id) {
   })
   .then(r => r.json())
   .then(d => {
-    if (!d.length) return;
+    if (!d.length) {
+      alert("No record found in this division");
+      return;
+    }
 
     const u = d[0];
     currentID = u.person_id;
@@ -396,7 +413,6 @@ function loadByID(id) {
     document.getElementById("d_age").innerText = u.age;
   });
 }
-
 // ✅ SAVE
 async function saveData() {
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
@@ -411,7 +427,8 @@ async function saveData() {
     body: JSON.stringify({
       name: document.getElementById("name").value,
       person_id: id,
-      age: document.getElementById("age").value
+      age: document.getElementById("age").value,
+      division: division   // ✅ IMPORTANT
     })
   });
 
