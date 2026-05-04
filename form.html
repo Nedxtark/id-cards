@@ -354,7 +354,7 @@ let currentID = null;
 
 /* ================= SEARCH ================= */
 function searchData() {
-  const q = searchID.value || "";
+ const q = document.getElementById("searchID").value || "";
 
   let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
@@ -483,7 +483,10 @@ async function deleteRecord() {
 /* ================= LOGOUT ================= */
 async function logout() {
   await supabase.auth.signOut();
-  localStorage.clear();
-  window.location.replace("login.html");
+
+  // Only remove your custom data
+  localStorage.removeItem("division");
+
+  window.location.href = "login.html";
 }
 </script>
