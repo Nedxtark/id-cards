@@ -413,7 +413,7 @@ function loadByID(id) {
 
     profile.style.display = "block";
     const repo = "https://nedxtark.github.io/view.html?id";
-    const qrLink = `https://nedxtark.github.io/YOUR_REPO_NAME/view.html?id=${encodeURIComponent(u.person_id)}`;
+    const qrLink = `https://nedxtark.github.io/id-cards/view.html?id=${encodeURIComponent(u.person_id)}`;
 
 document.getElementById("d_qr").src =
   `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrLink)}`;
