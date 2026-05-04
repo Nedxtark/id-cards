@@ -325,7 +325,8 @@ select.filled {
 
 </div>
   
-<script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script> 
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
@@ -415,6 +416,11 @@ function loadByID(id) {
     document.getElementById("d_name").innerText = u.name;
     document.getElementById("d_id").innerText = u.person_id;
     document.getElementById("d_age").innerText = u.age;
+    document.getElementById("d_birth").innerText = u.birthdate;
+    document.getElementById("d_gender").innerText = u.gender;
+    document.getElementById("d_address").innerText = u.address;
+    document.getElementById("d_mobile").innerText = u.mobile;
+    document.getElementById("d_email").innerText = u.email;
   });
 }
 
