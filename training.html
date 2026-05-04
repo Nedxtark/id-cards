@@ -4,9 +4,7 @@
 <title>Training Records</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: Arial;
@@ -28,7 +26,7 @@ body {
   border-radius: 10px;
 }
 
-/* ✅ UNIFIED FORM ELEMENT ALIGNMENT */
+/* FORM */
 input,
 select,
 textarea,
@@ -36,39 +34,23 @@ textarea,
   width: 100%;
   margin: 5px 0;
   padding: 8px;
-
   border-radius: 6px;
   border: 1px solid #ddd;
-
   font-family: Arial;
   font-size: 13px;
-
   display: block;
   box-sizing: border-box;
 }
 
-/* INPUT PLACEHOLDER */
 input::placeholder,
-textarea::placeholder {
-  color: #9ca3af;
-}
+textarea::placeholder { color: #9ca3af; }
 
-/* INPUT TEXT COLOR */
-input,
-textarea {
-  color: #111827;
-}
+input, textarea { color: #111827; }
 
-/* SELECT STYLE */
-select {
-  color: #9ca3af;
-}
+select { color: #9ca3af; }
 
-select:focus {
-  color: #111827;
-}
+select:focus { color: #111827; }
 
-/* TEXTAREA */
 textarea {
   min-height: 60px;
   resize: vertical;
@@ -98,15 +80,7 @@ button {
   padding: 6px 8px;
   font-size: 11.5px;
   text-align: left;
-  vertical-align: middle;
   white-space: nowrap;
-}
-
-.table button {
-  padding: 3px 6px;
-  font-size: 11px;
-  border-radius: 4px;
-  margin-right: 4px;
 }
 
 /* DROPDOWN */
@@ -116,29 +90,14 @@ button {
   color: rgba(156, 163, 175, 0.85);
 }
 
-.dropdown-box.filled {
-  color: #111827;
-}
-
-.scroll-dropdown {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .dropdown-menu-scroll {
   position: absolute;
-  top: 100%;
-  left: 0;
-
   width: 100%;
   background: white;
   border: 1px solid #ddd;
   border-radius: 6px;
-
   max-height: 180px;
   overflow-y: auto;
-
   display: none;
   z-index: 1000;
 }
@@ -146,7 +105,6 @@ button {
 .dropdown-menu-scroll div {
   padding: 8px;
   cursor: pointer;
-  font-size: 12px;
 }
 
 .dropdown-menu-scroll div:hover {
@@ -163,57 +121,36 @@ button {
     <h3>Add Training</h3>
 
     <select id="training_name">
-  <option value="" disabled selected hidden>Training Name</option>
-  <option>Hydraulic Excavator NC II</option>
-  <option>Road Roller (Compactor) NC II</option>
-  <option>Forklift NC II</option>
-  <option>Driving (Articulated Vehicle) NC III</option>
-  <option>Driving (Passenger Bus/Straight Truck) NC III</option>
-</select>
+      <option value="" disabled selected hidden>Training Name</option>
+      <option>Hydraulic Excavator NC II</option>
+      <option>Road Roller (Compactor) NC II</option>
+      <option>Forklift NC II</option>
+      <option>Driving (Articulated Vehicle) NC III</option>
+      <option>Driving (Passenger Bus/Straight Truck) NC III</option>
+    </select>
 
-<div class="scroll-dropdown">
-  <div class="dropdown-box" onclick="toggleTrainerList()">
-    <span id="trainer_display">Trainer</span>
-  </div>
+    <div class="scroll-dropdown">
+      <div class="dropdown-box" onclick="toggleTrainerList()">
+        <span id="trainer_display">Trainer</span>
+      </div>
 
-  <div id="trainer_list" class="dropdown-menu-scroll">
-    <div onclick="selectTrainer('Sherlene Y. Jabeniao')">Sherlene Y. Jabeniao</div>
-    <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Gaugie Martin Y. Efondo</div>
-    <div onclick="selectTrainer('Ara Andrea M. Badilla')">Ara Andrea M. Badilla</div>
-    <div onclick="selectTrainer('Elmer A. Dantes')">Elmer A. Dantes</div>
-    <div onclick="selectTrainer('Rondy C. Niedo')">Rondy C. Niedo</div>
-    <div onclick="selectTrainer('Charlyn Mae L. Busano')">Charlyn Mae L. Busano</div>
-    <div onclick="selectTrainer('Jofene France Ytem')">Jofene France Ytem</div>
-    <div onclick="selectTrainer('Alvin L. Pacheco')">Alvin L. Pacheco</div>
-    <div onclick="selectTrainer('Chariz Mae A. Tago')">Chariz Mae A. Tago</div>
-    <div onclick="selectTrainer('Recs A. Naguio')">Recs A. Naguio</div>
-    <div onclick="selectTrainer('Shawn C. Campos')">Shawn C. Campos</div>
-    <div onclick="selectTrainer('Karl Malone P. Obsioma')">Karl Malone P. Obsioma</div>
-    <div onclick="selectTrainer('Ronald Justine Baconguis')">Ronald Justine Baconguis</div>
-    <div onclick="selectTrainer('Kim Pablico')">Kim Pablico</div>
-    <div onclick="selectTrainer('Venchito Baclayo')">Venchito Baclayo</div>
-  </div>
+      <div id="trainer_list" class="dropdown-menu-scroll">
+        <div onclick="selectTrainer('Sherlene Y. Jabeniao')">Sherlene</div>
+        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Gaugie</div>
+      </div>
 
-  <input type="hidden" id="trainer">
-</div>
+      <input type="hidden" id="trainer">
+    </div>
 
-    <input 
-      type="text" 
-      id="date_started" 
-      placeholder="Date Started"
+    <input type="text" id="date_started" placeholder="Date Started"
       onfocus="this.type='date'"
-      onblur="if(!this.value)this.type='text'"
-    >
+      onblur="if(!this.value)this.type='text'">
 
-    <input 
-      type="text" 
-      id="date_completed" 
-      placeholder="Date Completed"
+    <input type="text" id="date_completed" placeholder="Date Completed"
       onfocus="this.type='date'"
-      onblur="if(!this.value)this.type='text'"
-    >
+      onblur="if(!this.value)this.type='text'">
 
-    <select id="status" required>
+    <select id="status">
       <option value="" disabled selected hidden>Status</option>
       <option value="Completed">Completed</option>
       <option value="Ongoing">Ongoing</option>
@@ -227,7 +164,6 @@ button {
 
   <div class="card">
     <h3>Training List</h3>
-
     <table class="table">
       <thead>
         <tr>
@@ -246,12 +182,16 @@ button {
 
 </div>
 
+<!-- SUPABASE LIB -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
-// elements
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const training_name = document.getElementById("training_name");
 const trainer = document.getElementById("trainer");
 const date_started = document.getElementById("date_started");
@@ -263,26 +203,24 @@ let selectedTrainingID = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const personID = urlParams.get("id");
+
 if (!personID) {
   alert("No person selected");
+  throw new Error("Missing person ID");
 }
-  const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
-async function protectPage() {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: "Bearer " + localStorage.getItem("sb-access-token")
-    }
-  });
+/* AUTH + INIT */
+window.addEventListener("load", async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  if (!res.ok) {
+  if (!session) {
     window.location.href = "login.html";
+    return;
   }
-}
 
-protectPage();
+  loadTraining();
+});
+
 /* LOAD */
 function loadTraining() {
   fetch(`${SUPABASE_URL}/rest/v1/training?person_id=eq.${personID}&order=date_started.desc`, {
@@ -298,7 +236,7 @@ function loadTraining() {
     table.innerHTML = "";
 
     data.forEach(t => {
-      const row = `
+      table.innerHTML += `
         <tr>
           <td>${t.training_name || ""}</td>
           <td>${t.trainer || ""}</td>
@@ -312,71 +250,13 @@ function loadTraining() {
           </td>
         </tr>
       `;
-      table.innerHTML += row;
     });
 
   });
 }
 
-/* EDIT */
-function editTraining(id, btn) {
-
-  selectedTrainingID = id;
-
-  const row = btn.closest("tr");
-  const cells = row.children;
-
-  document.querySelectorAll("#trainingTable tr").forEach(r => {
-    r.style.background = "";
-  });
-  row.style.background = "#e5e7eb";
-
-  training_name.value = cells[0].innerText;
-  trainer.value = cells[1].innerText;
-
-  date_started.type = "date";
-  date_started.value = cells[2].innerText;
-
-  date_completed.type = "date";
-  date_completed.value = cells[3].innerText;
-
-  status.value = cells[4].innerText;
-  remarks.value = cells[5].innerText;
-
-  document.querySelector("button").innerText = "Update Training";
-}
-
-/* RESET */
-function resetForm() {
-
-  selectedTrainingID = null;
-
-  training_name.value = "";
-  trainer.value = "";
-
-  date_started.value = "";
-  date_started.type = "text";
-
-  date_completed.value = "";
-  date_completed.type = "text";
-
-  status.selectedIndex = 0;
-  remarks.value = "";
-
-  document.querySelector("button").innerText = "Save Training";
-
-  document.querySelectorAll("#trainingTable tr").forEach(r => {
-    r.style.background = "";
-  });
-}
-
-/* SAVE / UPDATE */
+/* SAVE */
 function saveTraining() {
-
-  if (!status.value) {
-    alert("Please select status");
-    return;
-  }
 
   const payload = {
     person_id: personID,
@@ -388,74 +268,54 @@ function saveTraining() {
     remarks: remarks.value
   };
 
-  if (selectedTrainingID) {
+  fetch(`${SUPABASE_URL}/rest/v1/training`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    alert("Saved!");
+    resetForm();
+    loadTraining();
+  });
+}
 
-    fetch(`${SUPABASE_URL}/rest/v1/training?id=eq.${selectedTrainingID}`, {
-      method: "PATCH",
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("Training updated!");
-      resetForm();
-      loadTraining();
-    });
-
-  } else {
-
-    fetch(`${SUPABASE_URL}/rest/v1/training`, {
-      method: "POST",
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("Training saved!");
-      resetForm();
-      loadTraining();
-    });
-
-  }
+/* RESET */
+function resetForm() {
+  training_name.value = "";
+  trainer.value = "";
+  date_started.value = "";
+  date_completed.value = "";
+  status.selectedIndex = 0;
+  remarks.value = "";
 }
 
 /* DELETE */
 function deleteTraining(id) {
-
-  if (!confirm("Delete this training?")) return;
-
   fetch(`${SUPABASE_URL}/rest/v1/training?id=eq.${id}`, {
     method: "DELETE",
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY
     }
-  })
-  .then(() => {
-    alert("Deleted!");
-    loadTraining();
-  });
-
+  }).then(() => loadTraining());
 }
 
-/* INIT */
-loadTraining();
+/* DROPDOWN */
 function toggleTrainerList() {
   const el = document.getElementById("trainer_list");
   el.style.display = el.style.display === "block" ? "none" : "block";
 }
 
 function selectTrainer(value) {
-  document.getElementById("trainer").value = value;
+  trainer.value = value;
   document.getElementById("trainer_display").innerText = value;
   document.getElementById("trainer_list").style.display = "none";
 }
+
 </script>
 
 </body>
