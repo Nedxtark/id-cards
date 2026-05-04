@@ -412,6 +412,7 @@ function loadByID(id) {
     currentID = u.person_id;
 
     profile.style.display = "block";
+    const repo = "https://nedxtark.github.io/view.html?id";
    const qrLink = `${window.location.origin}/view.html?id=${encodeURIComponent(u.person_id)}`;
 
 document.getElementById("d_qr").src =
