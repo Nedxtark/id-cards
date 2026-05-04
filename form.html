@@ -354,13 +354,13 @@ let currentID = null;
 
 /* ================= SEARCH ================= */
 function searchData() {
-  const q = searchID.value;
+  const q = searchID.value || "";
 
   let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
-if (division) {
-  url = `${SUPABASE_URL}/rest/v1/ids?and=(division.ilike.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
-}
+  if (division) {
+    url = `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
+  }
 
   fetch(url, {
     headers: {
@@ -370,9 +370,10 @@ if (division) {
   })
   .then(r => r.json())
   .then(data => {
+    console.log("SEARCH RESULT:", data); // 🔥 DEBUG
 
-    if (!data.length) {
-      alert("No record");
+    if (!data || !data.length) {
+      alert("No record found");
       profile.style.display = "none";
       return;
     }
@@ -384,19 +385,12 @@ if (division) {
       const div = document.createElement("div");
       div.className = "result";
 
-      div.innerHTML = `
-        <div><b>${u.name}</b></div>
-        <div class="result-id">${u.person_id}</div>
-      `;
+      div.innerHTML = `<b>${u.name}</b><div>${u.person_id}</div>`;
 
-      div.onclick = () => {
-        loadByID(u.person_id);
-        results.style.display = "none";
-      };
+      div.onclick = () => loadByID(u.person_id);
 
       results.appendChild(div);
     });
-
   });
 }
 
@@ -405,9 +399,9 @@ function loadByID(id) {
 
   let url = `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`;
 
-if (division) {
-  url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.ilike.${division})`;
-}
+  if (division) {
+    url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`;
+  }
 
   fetch(url, {
     headers: {
@@ -417,7 +411,12 @@ if (division) {
   })
   .then(r => r.json())
   .then(d => {
-    if (!d.length) return;
+    console.log("LOAD RESULT:", d); // 🔥 DEBUG
+
+    if (!d || !d.length) {
+      alert("No record found in loadByID");
+      return;
+    }
 
     const u = d[0];
     currentID = u.person_id;
@@ -434,18 +433,6 @@ if (division) {
     d_email.innerText = u.email;
 
     d_qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
-
-    const link = (f, folder="documents") =>
-      f ? `<a href="${SUPABASE_URL}/storage/v1/object/public/${folder}/${f}" target="_blank">View</a>`
-        : "<span style='color:#9ca3af'>No file</span>";
-
-    d_birth_cert.innerHTML = link(u.birth_cert);
-    d_school.innerHTML = link(u.school_record);
-    d_brgy.innerHTML = link(u.brgy_clearance);
-
-    photoView.src = u.photo
-      ? `${SUPABASE_URL}/storage/v1/object/public/photos/${u.photo}`
-      : "https://via.placeholder.com/120";
   });
 }
 
