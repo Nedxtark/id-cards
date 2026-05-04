@@ -584,6 +584,14 @@ window.logout = async function () {
   localStorage.clear();
   window.location.href = "login.html";
 };
+  function openTraining() {
+  if (!currentID) {
+    alert("Select a person first");
+    return;
+  }
+
+  window.open(`training.html?id=${currentID}`, "_blank");
+}
 
 // ✅ CLEAR
 function clearForm() {
