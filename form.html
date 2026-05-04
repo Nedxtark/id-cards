@@ -405,9 +405,9 @@ function loadByID(id) {
 
   let url = `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`;
 
-  if (division) {
-    url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`;
-  }
+if (division) {
+  url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},lower(division).eq.${division.toLowerCase()})`;
+}
 
   fetch(url, {
     headers: {
