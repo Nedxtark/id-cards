@@ -675,11 +675,28 @@ window.logout = async function () {
 
 // ✅ CLEAR
 function clearForm() {
-  document.querySelectorAll("input").forEach(i => i.value = "");
+  // ✅ clear all form inputs
+  document.querySelectorAll(".left input").forEach(i => i.value = "");
+  document.querySelectorAll(".left select").forEach(s => s.selectedIndex = 0);
+
+  // ✅ clear file inputs
+  document.getElementById("photo").value = "";
+  document.getElementById("birth_cert").value = "";
+  document.getElementById("school_record").value = "";
+  document.getElementById("brgy_clearance").value = "";
+
+  // ✅ clear profile display (RIGHT SIDE)
+  document.getElementById("profile").style.display = "none";
+
+  // ✅ reset current ID
+  currentID = null;
+
+  // ✅ clear search results dropdown
+  document.getElementById("results").innerHTML = "";
+
+  // ✅ optional: clear search input
+  document.getElementById("searchID").value = "";
 }
-document.addEventListener("click", function (e) {
-  const searchBox = document.querySelector(".search-wrapper");
-  const results = document.getElementById("results");
 
   // if click is outside search area → hide dropdown
   if (!searchBox.contains(e.target)) {
