@@ -328,21 +328,17 @@ select.filled {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-/* ================= SUPABASE ================= */
 const SUPABASE_URL = "https://euocewpmtmevbxoskmlr.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI"; // ❗ IMPORTANT
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1b2Nld3BtdG1ldmJ4b3NrbWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjA0NzgsImV4cCI6MjA4OTk5NjQ3OH0.mu3_IGvFc5YO_2f5YKdrRaHnI0fzlpJ88zsBO5tsEbI";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ================= DIVISION ================= */
 let division = localStorage.getItem("division");
 
-const urlParams = new URLSearchParams(window.location.search);
-const urlDivision = urlParams.get("division");
-
-if (urlDivision) {
-  division = urlDivision;
-  localStorage.setItem("division", urlDivision);
+// CLEAN invalid values
+if (division === "null" || division === "undefined" || !division) {
+  division = null;
 }
 
 console.log("ACTIVE DIVISION:", division);
@@ -362,7 +358,6 @@ function searchData() {
 
   let url = `${SUPABASE_URL}/rest/v1/ids?or=(name.ilike.*${q}*,person_id.ilike.*${q}*)`;
 
-  // ✅ APPLY DIVISION FILTER IF EXISTS
   if (division) {
     url = `${SUPABASE_URL}/rest/v1/ids?and=(division.eq.${division},or(name.ilike.*${q}*,person_id.ilike.*${q}*))`;
   }
@@ -410,7 +405,6 @@ function loadByID(id) {
 
   let url = `${SUPABASE_URL}/rest/v1/ids?person_id=eq.${id}`;
 
-  // ✅ APPLY DIVISION FILTER IF EXISTS
   if (division) {
     url = `${SUPABASE_URL}/rest/v1/ids?and=(person_id.eq.${id},division.eq.${division})`;
   }
@@ -453,6 +447,50 @@ function loadByID(id) {
       ? `${SUPABASE_URL}/storage/v1/object/public/photos/${u.photo}`
       : "https://via.placeholder.com/120";
   });
+}
+
+/* ================= BASIC SAVE (RESTORED) ================= */
+async function saveData() {
+  const id = person_id.value || "ID-" + Date.now();
+
+  await fetch(`${SUPABASE_URL}/rest/v1/ids`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: name.value,
+      person_id: id,
+      birthdate: birthdate.value,
+      age: age.value,
+      gender: gender.value,
+      address: address.value,
+      mobile: mobile.value,
+      email: email.value,
+      division: division
+    })
+  });
+
+  alert("Saved!");
+  loadByID(id);
+}
+
+/* ================= DELETE ================= */
+async function deleteRecord() {
+  if (!confirm("Delete this record?")) return;
+
+  await fetch(`${SUPABASE_URL}/rest/v1/ids?person_id=eq.${currentID}`, {
+    method: "DELETE",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY
+    }
+  });
+
+  alert("Deleted!");
+  profile.style.display = "none";
 }
 
 /* ================= LOGOUT ================= */
