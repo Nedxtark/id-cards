@@ -280,21 +280,20 @@ select.filled {
 </head>
 
 <body>
-<div class="search-box-wrapper">
-  <div class="search-box">
-    <input id="searchID" placeholder="Search Name or ID">
-    <button onclick="searchData()">Search</button>
-  </div>
-  <div id="results"></div>
-</div>
 <div class="topbar">
-  <div class="search-box">
-    <input id="searchID" placeholder="Search Name or ID">
-    <button onclick="searchData()">Search</button>
+  <div class="search-wrapper">
+    <div class="search-box">
+      <input id="searchID" placeholder="Search Name or ID">
+      <button onclick="searchData()">Search</button>
+    </div>
+
+    <div id="results"></div>
   </div>
-  <button onclick="logout()" style="position:absolute; top:10px; right:10px;">Logout</button>
+
+  <button onclick="logout()" style="position:absolute; top:10px; right:10px;">
+    Logout
+  </button>
 </div>
-<div id="results"></div>
 
 <div class="layout">
 
