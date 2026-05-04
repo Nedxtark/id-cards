@@ -479,7 +479,7 @@ function loadByID(id) {
     function fileLink(path) {
   if (!path) return "—";
 
-  const url = `${SUPABASE_URL}/storage/v1/object/public/docs/${path}`;
+  const url = `${SUPABASE_URL}/storage/v1/object/public/documents/${path}`;
   return `<a href="${url}" target="_blank">View</a>`;
 }
    const photoUrl = u.photo
