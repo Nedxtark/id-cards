@@ -476,7 +476,12 @@ function loadByID(id) {
     const u = d[0];
     currentID = u.person_id;
     profile.style.display = "block";
-    
+    function fileLink(path) {
+  if (!path) return "—";
+
+  const url = `${SUPABASE_URL}/storage/v1/object/public/docs/${path}`;
+  return `<a href="${url}" target="_blank">View</a>`;
+}
    const photoUrl = u.photo
   ? `${SUPABASE_URL}/storage/v1/object/public/photos/${u.photo}`
   : "https://via.placeholder.com/120";
@@ -496,12 +501,43 @@ document.getElementById("d_qr").src =
     document.getElementById("d_address").innerText = u.address;
     document.getElementById("d_mobile").innerText = u.mobile;
     document.getElementById("d_email").innerText = u.email;
+    document.getElementById("d_birth_cert").innerHTML = fileLink(u.birth_cert);
+  document.getElementById("d_school").innerHTML = fileLink(u.school_record);
+  document.getElementById("d_brgy").innerHTML = fileLink(u.brgy_clearance);
+
   });
+}
+async function uploadFile(file, folder) {
+  if (!file) return null;
+
+  const fileName = Date.now() + "_" + file.name;
+
+  const { data, error } = await supabaseClient.storage
+    .from("docs")
+    .upload(`${folder}/${fileName}`, file);
+
+  if (error) {
+    console.error(error);
+    alert("Upload failed");
+    return null;
+  }
+
+  return `${folder}/${fileName}`; // save path in DB
 }
 
 // ✅ SAVE (FULL FIELDS)
 async function saveData() {
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
+
+  // ✅ GET FILES
+  const birthFile = document.getElementById("birth_cert").files[0];
+  const schoolFile = document.getElementById("school_record").files[0];
+  const brgyFile = document.getElementById("brgy_clearance").files[0];
+
+  // ✅ UPLOAD FILES
+  const birthPath = await uploadFile(birthFile, "birth");
+  const schoolPath = await uploadFile(schoolFile, "school");
+  const brgyPath = await uploadFile(brgyFile, "brgy");
 
   const payload = {
     name: document.getElementById("name").value,
@@ -511,7 +547,12 @@ async function saveData() {
     gender: document.getElementById("gender").value,
     address: document.getElementById("address").value,
     mobile: document.getElementById("mobile").value,
-    email: document.getElementById("email").value
+    email: document.getElementById("email").value,
+
+    // ✅ SAVE FILE PATHS
+    birth_cert: birthPath,
+    school_record: schoolPath,
+    brgy_clearance: brgyPath
   };
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
@@ -526,42 +567,14 @@ async function saveData() {
   });
 
   const text = await res.text();
-  console.log("SUPABASE ERROR/RESPONSE:", text);
 
   if (!res.ok) {
     alert("Save failed: " + text);
     return;
   }
 
+  alert("Saved successfully!");
 }
-document.getElementById("photo").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function (event) {
-    document.getElementById("photoView").src = event.target.result;
-  };
-
-  reader.readAsDataURL(file);
-});
-  document.getElementById("birthdate").addEventListener("input", function () {
-  const birthValue = this.value;
-  if (!birthValue) return;
-
-  const birthDate = new Date(birthValue);
-  const today = new Date();
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  document.getElementById("age").value = age;
-});
 // ✅ DELETE (FIXED)
 async function deleteRecord() {
   if (!confirm("Delete?")) return;
