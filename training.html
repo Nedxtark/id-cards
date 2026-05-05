@@ -258,6 +258,11 @@ function loadTraining() {
 }
 
 /* SAVE */
+  function closeAllDropdowns() {
+  document.getElementById("training_list").style.display = "none";
+  document.getElementById("trainer_list").style.display = "none";
+  document.getElementById("status_list").style.display = "none";
+    
 function saveTraining() {
   const payload = {
     person_id: personID,
@@ -316,8 +321,10 @@ function resetForm() {
 
 /* TRAINING DROPDOWN */
 function toggleTrainingList() {
-  const el = document.getElementById("training_list");
-  el.style.display = el.style.display === "block" ? "none" : "block";
+ onst el = document.getElementById("training_list");
+  const isOpen = el.style.display === "block";
+  closeAllDropdowns();
+  el.style.display = isOpen ? "none" : "block";
 }
 
 function selectTraining(value) {
@@ -329,7 +336,9 @@ function selectTraining(value) {
 /* TRAINER DROPDOWN */
 function toggleTrainerList() {
   const el = document.getElementById("trainer_list");
-  el.style.display = el.style.display === "block" ? "none" : "block";
+  const isOpen = el.style.display === "block";
+  closeAllDropdowns();
+  el.style.display = isOpen ? "none" : "block";
 }
 
 function selectTrainer(value) {
@@ -340,8 +349,10 @@ function selectTrainer(value) {
 
 /* STATUS DROPDOWN */
 function toggleStatusList() {
-  const el = document.getElementById("status_list");
-  el.style.display = el.style.display === "block" ? "none" : "block";
+   const el = document.getElementById("status_list");
+  const isOpen = el.style.display === "block";
+  closeAllDropdowns();
+  el.style.display = isOpen ? "none" : "block";
 }
 
 function selectStatus(value) {
@@ -349,7 +360,11 @@ function selectStatus(value) {
   document.getElementById("status_display").innerText = value;
   document.getElementById("status_list").style.display = "none";
 }
-
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".scroll-dropdown")) {
+    closeAllDropdowns();
+  }
+});
 </script>
 
 </body>
