@@ -100,7 +100,8 @@ button {
 .dropdown-menu-scroll div:hover {
   background: #f3f4f6;
 }
-  .scroll-dropdown {
+
+.scroll-dropdown {
   position: relative;
   width: 100%;
 }
@@ -114,7 +115,7 @@ button {
   <div class="card">
     <h3>Add Training</h3>
 
-    <!-- UPDATED TRAINING DROPDOWN -->
+    <!-- TRAINING -->
     <div class="scroll-dropdown">
       <div class="dropdown-box" onclick="toggleTrainingList()">
         <span id="training_display">Training Name</span>
@@ -140,23 +141,6 @@ button {
       <div id="trainer_list" class="dropdown-menu-scroll">
         <div onclick="selectTrainer('Sherlene Y. Jabeniao')">Sherlene Y. Jabeniao</div>
         <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Gaugie Martin Y. Efondo</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Ara Andrea M. Badilla</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Elmer A. Dantes</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Rondy C. Niedo</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Jofene France A. Ytem</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Charlyn Mae L. Busano</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Recs A. Naguio</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Alvin L. Pacheco</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Chariz Mae A. Tago</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Karl Malone P. Obsioma</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Shawn A. Campos</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Ronald Justine O. Baconguis</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Venchito G. Baclayo</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Evan Kim U. Pablico</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Whimer Mark S. Respuesto</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Edwin Zuello</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Roel W. Tacandong</div>
-        <div onclick="selectTrainer('Gaugie Martin Y. Efondo')">Noel B. Woo</div>
       </div>
 
       <input type="hidden" id="trainer">
@@ -170,18 +154,19 @@ button {
       onfocus="this.type='date'"
       onblur="if(!this.value)this.type='text'">
 
-<div class="scroll-dropdown">
-  <div class="dropdown-box" onclick="toggleStatusList()">
-    <span id="status_display">Status</span>
-  </div>
+    <!-- STATUS -->
+    <div class="scroll-dropdown">
+      <div class="dropdown-box" onclick="toggleStatusList()">
+        <span id="status_display">Status</span>
+      </div>
 
-  <div id="status_list" class="dropdown-menu-scroll">
-    <div onclick="selectStatus('Completed')">Completed</div>
-    <div onclick="selectStatus('Ongoing')">Ongoing</div>
-  </div>
+      <div id="status_list" class="dropdown-menu-scroll">
+        <div onclick="selectStatus('Completed')">Completed</div>
+        <div onclick="selectStatus('Ongoing')">Ongoing</div>
+      </div>
 
-  <input type="hidden" id="status">
-</div>
+      <input type="hidden" id="status">
+    </div>
 
     <textarea id="remarks" placeholder="Remarks"></textarea>
 
@@ -192,17 +177,6 @@ button {
   <div class="card">
     <h3>Training List</h3>
     <table class="table">
-      <thead>
-        <tr>
-          <th>Training</th>
-          <th>Trainer</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Status</th>
-          <th>Remarks</th>
-          <th>Action</th>
-        </tr>
-      </thead>
       <tbody id="trainingTable"></tbody>
     </table>
   </div>
@@ -226,7 +200,6 @@ const status = document.getElementById("status");
 const remarks = document.getElementById("remarks");
 
 let selectedTrainingID = null;
-
 const personID = new URLSearchParams(window.location.search).get("id");
 
 window.addEventListener("load", async () => {
@@ -267,7 +240,7 @@ function loadTraining() {
   });
 }
 
-/* SAVE + UPDATE */
+/* SAVE */
 function saveTraining() {
 
   const payload = {
@@ -280,16 +253,8 @@ function saveTraining() {
     remarks: remarks.value
   };
 
-  let url = `${SUPABASE_URL}/rest/v1/training`;
-  let method = "POST";
-
-  if (selectedTrainingID) {
-    url += `?id=eq.${selectedTrainingID}`;
-    method = "PATCH";
-  }
-
-  fetch(url, {
-    method: method,
+  fetch(`${SUPABASE_URL}/rest/v1/training`, {
+    method: "POST",
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: "Bearer " + SUPABASE_KEY,
@@ -297,8 +262,7 @@ function saveTraining() {
     },
     body: JSON.stringify(payload)
   }).then(() => {
-    alert(selectedTrainingID ? "Updated!" : "Saved!");
-    selectedTrainingID = null;
+    alert("Saved!");
     resetForm();
     loadTraining();
   });
@@ -315,58 +279,37 @@ function editTraining(id, btn) {
   date_started.value = row.children[2].innerText;
   date_completed.value = row.children[3].innerText;
   status.value = row.children[4].innerText;
+  document.getElementById("status_display").innerText = row.children[4].innerText;
   remarks.value = row.children[5].innerText;
 
   document.getElementById("training_display").innerText = row.children[0].innerText;
   document.getElementById("trainer_display").innerText = row.children[1].innerText;
 }
 
-/* DELETE */
-function deleteTraining(id) {
-  fetch(`${SUPABASE_URL}/rest/v1/training?id=eq.${id}`, {
-    method: "DELETE",
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: "Bearer " + SUPABASE_KEY
-    }
-  }).then(() => loadTraining());
-}
-
 /* RESET */
 function resetForm() {
-  selectedTrainingID = null;
   training_name.value = "";
   trainer.value = "";
   date_started.value = "";
   date_completed.value = "";
-  status.selectedIndex = 0;
+  status.value = "";
   remarks.value = "";
 
   document.getElementById("training_display").innerText = "Training Name";
   document.getElementById("trainer_display").innerText = "Trainer";
+  document.getElementById("status_display").innerText = "Status";
 }
 
-/* DROPDOWNS */
-function toggleTrainingList() {
-  const el = document.getElementById("training_list");
+/* STATUS FUNCTIONS (FIX) */
+function toggleStatusList() {
+  const el = document.getElementById("status_list");
   el.style.display = el.style.display === "block" ? "none" : "block";
 }
 
-function selectTraining(value) {
-  training_name.value = value;
-  document.getElementById("training_display").innerText = value;
-  document.getElementById("training_list").style.display = "none";
-}
-
-function toggleTrainerList() {
-  const el = document.getElementById("trainer_list");
-  el.style.display = el.style.display === "block" ? "none" : "block";
-}
-
-function selectTrainer(value) {
-  trainer.value = value;
-  document.getElementById("trainer_display").innerText = value;
-  document.getElementById("trainer_list").style.display = "none";
+function selectStatus(value) {
+  status.value = value;
+  document.getElementById("status_display").innerText = value;
+  document.getElementById("status_list").style.display = "none";
 }
 
 </script>
