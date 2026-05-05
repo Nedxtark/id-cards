@@ -242,7 +242,6 @@ function loadTraining() {
 
 /* SAVE */
 function saveTraining() {
-
   const payload = {
     person_id: personID,
     training_name: training_name.value,
@@ -270,8 +269,6 @@ function saveTraining() {
 
 /* EDIT */
 function editTraining(id, btn) {
-  selectedTrainingID = id;
-
   const row = btn.closest("tr");
 
   training_name.value = row.children[0].innerText;
@@ -279,11 +276,11 @@ function editTraining(id, btn) {
   date_started.value = row.children[2].innerText;
   date_completed.value = row.children[3].innerText;
   status.value = row.children[4].innerText;
-  document.getElementById("status_display").innerText = row.children[4].innerText;
   remarks.value = row.children[5].innerText;
 
   document.getElementById("training_display").innerText = row.children[0].innerText;
   document.getElementById("trainer_display").innerText = row.children[1].innerText;
+  document.getElementById("status_display").innerText = row.children[4].innerText;
 }
 
 /* RESET */
@@ -300,7 +297,31 @@ function resetForm() {
   document.getElementById("status_display").innerText = "Status";
 }
 
-/* STATUS FUNCTIONS (FIX) */
+/* TRAINING DROPDOWN */
+function toggleTrainingList() {
+  const el = document.getElementById("training_list");
+  el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+function selectTraining(value) {
+  training_name.value = value;
+  document.getElementById("training_display").innerText = value;
+  document.getElementById("training_list").style.display = "none";
+}
+
+/* TRAINER DROPDOWN */
+function toggleTrainerList() {
+  const el = document.getElementById("trainer_list");
+  el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+function selectTrainer(value) {
+  trainer.value = value;
+  document.getElementById("trainer_display").innerText = value;
+  document.getElementById("trainer_list").style.display = "none";
+}
+
+/* STATUS DROPDOWN */
 function toggleStatusList() {
   const el = document.getElementById("status_list");
   el.style.display = el.style.display === "block" ? "none" : "block";
