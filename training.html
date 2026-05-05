@@ -258,10 +258,11 @@ function loadTraining() {
 }
 
 /* SAVE */
-  function closeAllDropdowns() {
+ function closeAllDropdowns() {
   document.getElementById("training_list").style.display = "none";
   document.getElementById("trainer_list").style.display = "none";
   document.getElementById("status_list").style.display = "none";
+}
     
 function saveTraining() {
   const payload = {
@@ -321,7 +322,7 @@ function resetForm() {
 
 /* TRAINING DROPDOWN */
 function toggleTrainingList() {
- onst el = document.getElementById("training_list");
+ const el = document.getElementById("training_list");
   const isOpen = el.style.display === "block";
   closeAllDropdowns();
   el.style.display = isOpen ? "none" : "block";
