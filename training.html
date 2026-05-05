@@ -80,6 +80,8 @@ button {
 
 .dropdown-menu-scroll {
   position: absolute;
+  top: 100%;
+  left: 0;
   width: 100%;
   background: white;
   border: 1px solid #ddd;
@@ -97,6 +99,10 @@ button {
 
 .dropdown-menu-scroll div:hover {
   background: #f3f4f6;
+}
+  .scroll-dropdown {
+  position: relative;
+  width: 100%;
 }
 </style>
 </head>
@@ -164,11 +170,18 @@ button {
       onfocus="this.type='date'"
       onblur="if(!this.value)this.type='text'">
 
-    <select id="status">
-      <option value="" disabled selected hidden>Status</option>
-      <option value="Completed">Completed</option>
-      <option value="Ongoing">Ongoing</option>
-    </select>
+   <div class="scroll-dropdown">
+  <div class="dropdown-box" onclick="toggleStatusList()">
+    <span id="status_display">Status</span>
+  </div>
+
+  <div id="status_list" class="dropdown-menu-scroll">
+    <div onclick="selectStatus('Completed')">Completed</div>
+    <div onclick="selectStatus('Ongoing')">Ongoing</div>
+  </div>
+
+  <input type="hidden" id="status">
+</div>
 
     <textarea id="remarks" placeholder="Remarks"></textarea>
 
