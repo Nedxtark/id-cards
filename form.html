@@ -626,6 +626,19 @@ alert("Saved successfully!");
   }
 
   // ✅ GET FILES (PUT HERE)
+   const photoFile = document.getElementById("photo").files[0];
+
+if (photoFile) {
+  const fileName = Date.now() + "_" + photoFile.name;
+
+  const { error } = await supabaseClient.storage
+    .from("photos")
+    .upload(fileName, photoFile);
+
+  if (!error) {
+    payload.photo = fileName;
+  }
+}
   const birthFile = document.getElementById("birth_cert").files[0];
   const schoolFile = document.getElementById("school_record").files[0];
   const brgyFile = document.getElementById("brgy_clearance").files[0];
