@@ -529,29 +529,57 @@ async function saveData() {
 
   // ✅ GET FILES
   const birthFile = document.getElementById("birth_cert").files[0];
+  const photoFile = document.getElementById("photo").files[0];
   const schoolFile = document.getElementById("school_record").files[0];
   const brgyFile = document.getElementById("brgy_clearance").files[0];
 
   // ✅ UPLOAD FILES
+  let photoPath = null;
+
+if (photoFile) {
+
+  const fileName = Date.now() + "_" + photoFile.name;
+
+  const { error } = await supabaseClient.storage
+    .from("photos")
+    .upload(fileName, photoFile);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  photoPath = fileName;
+}
   const birthPath = await uploadFile(birthFile, "birth");
   const schoolPath = await uploadFile(schoolFile, "school");
   const brgyPath = await uploadFile(brgyFile, "brgy");
 
-  const payload = {
-    name: document.getElementById("name").value,
-    person_id: id,
-    birthdate: document.getElementById("birthdate").value,
-    age: document.getElementById("age").value,
-    gender: document.getElementById("gender").value,
-    address: document.getElementById("address").value,
-    mobile: document.getElementById("mobile").value,
-    email: document.getElementById("email").value,
+ const payload = {
 
-    // ✅ SAVE FILE PATHS
-    birth_cert: birthPath,
-    school_record: schoolPath,
-    brgy_clearance: brgyPath
-  };
+  name: document.getElementById("name").value,
+
+  person_id: id,
+
+  photo: photoPath,
+
+  birthdate: document.getElementById("birthdate").value,
+
+  age: document.getElementById("age").value,
+
+  gender: document.getElementById("gender").value,
+
+  address: document.getElementById("address").value,
+
+  mobile: document.getElementById("mobile").value,
+
+  email: document.getElementById("email").value,
+
+  birth_cert: birthPath,
+  school_record: schoolPath,
+  brgy_clearance: brgyPath
+
+};
 
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
     method: "POST",
