@@ -595,25 +595,29 @@ console.log("photoPath =", photoPath);
 
 };
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: "Bearer " + SUPABASE_KEY,
-      "Content-Type": "application/json",
-      Prefer: "return=representation"
-    },
-    body: JSON.stringify(payload)
-  });
+ const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+  method: "POST",
+  headers: {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json",
+    Prefer: "return=representation"
+  },
+  body: JSON.stringify(payload)
+});
 
-  const text = await res.text();
+const text = await res.text();
 
-  if (!res.ok) {
-    alert("Save failed: " + text);
-    return;
-  }
+console.log("PAYLOAD:", payload);
+console.log("STATUS:", res.status);
+console.log("DB RESPONSE:", text);
 
-  alert("Saved successfully!");
+if (!res.ok) {
+  alert("Save failed:\n" + text);
+  return;
+}
+
+alert("Saved successfully!");
 }
  async function updateRecord() {
   if (!currentID) {
