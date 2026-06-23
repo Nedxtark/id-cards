@@ -548,7 +548,14 @@ console.log("UPLOAD RESULT:", data);
 console.log("UPLOAD ERROR:", error);
 
 if (error) {
-  alert(error.message);
+  console.error(error);
+
+  alert(
+    "UPLOAD FAILED\n\n" +
+    "Message: " + error.message + "\n" +
+    "Status: " + error.statusCode
+  );
+
   return;
 }
 
