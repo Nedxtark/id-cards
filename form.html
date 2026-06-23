@@ -540,14 +540,21 @@ if (photoFile) {
 
   const fileName = Date.now() + "_" + photoFile.name;
 
-  const { error } = await supabaseClient.storage
-    .from("photos")
-    .upload(fileName, photoFile);
+ const { data, error } = await supabaseClient.storage
+  .from("photos")
+  .upload(fileName, photoFile);
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+console.log("UPLOAD RESULT:", data);
+console.log("UPLOAD ERROR:", error);
+
+if (error) {
+  alert(error.message);
+  return;
+}
+
+photoPath = fileName;
+
+console.log("photoPath =", photoPath);
 
   photoPath = fileName;
 }
