@@ -296,10 +296,8 @@ select.filled {
 
   <input id="name" placeholder="Full Name">
   <input id="person_id" placeholder="ID">
-  <input type="text" id="birthdate" placeholder="Date"
-       onfocus="this.type='date'; this.showPicker();"
-       onblur="if(!this.value){this.type='text'}">
-  <input id="age" placeholder="Age">
+   <input type="date" id="birthdate">
+  <input id="age" placeholder="Age" readonly>
 
   <select id="gender" class="placeholder">
   <option value="" disabled selected hidden>Gender</option>
@@ -697,7 +695,30 @@ function clearForm() {
   // ✅ optional: clear search input
   document.getElementById("searchID").value = "";
 }
+document.getElementById("birthdate").addEventListener("input", function () {
 
+  const birth = new Date(this.value);
+
+  if (isNaN(birth)) {
+    document.getElementById("age").value = "";
+    return;
+  }
+
+  const today = new Date();
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const m = today.getMonth() - birth.getMonth();
+
+  if (
+    m < 0 ||
+    (m === 0 && today.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+
+  document.getElementById("age").value = age;
+});
   // if click is outside search area → hide dropdown
   document.addEventListener("click", function (e) {
   const searchWrapper = document.querySelector(".search-wrapper");
