@@ -525,6 +525,13 @@ async function uploadFile(file, folder) {
 
 // ✅ SAVE (FULL FIELDS)
 async function saveData() {
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  const userEmail = session?.user?.email || "";
+
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
 
   // ✅ GET FILES
@@ -533,85 +540,91 @@ async function saveData() {
   const schoolFile = document.getElementById("school_record").files[0];
   const brgyFile = document.getElementById("brgy_clearance").files[0];
 
-  // ✅ UPLOAD FILES
- let photoPath = null;
+  // ✅ UPLOAD PHOTO
+  let photoPath = null;
 
-if (photoFile) {
+  if (photoFile) {
 
-  const fileName = Date.now() + "_" + photoFile.name;
+    const fileName = Date.now() + "_" + photoFile.name;
 
-  const { error } = await supabaseClient.storage
-    .from("photos")
-    .upload(fileName, photoFile);
+    const { error } = await supabaseClient.storage
+      .from("photos")
+      .upload(fileName, photoFile);
 
-  if (error) {
-    console.error(error);
+    if (error) {
+      console.error(error);
 
-    alert(
-      "PHOTO UPLOAD FAILED\n\n" +
-      error.message
-    );
+      alert(
+        "PHOTO UPLOAD FAILED\n\n" +
+        error.message
+      );
 
-    return;
+      return;
+    }
+
+    photoPath = fileName;
+
+    console.log("PHOTO SAVED:", photoPath);
   }
 
-  photoPath = fileName;
-
-  console.log("PHOTO SAVED:", photoPath);
-}
+  // ✅ UPLOAD DOCUMENTS
   const birthPath = await uploadFile(birthFile, "birth");
   const schoolPath = await uploadFile(schoolFile, "school");
   const brgyPath = await uploadFile(brgyFile, "brgy");
 
- const payload = {
+  // ✅ PAYLOAD
+  const payload = {
 
-  name: document.getElementById("name").value,
+    name: document.getElementById("name").value,
 
-  person_id: id,
+    person_id: id,
 
-  photo: photoPath,
+    created_by: userEmail, // ✅ Logged-in user
 
-  birthdate: document.getElementById("birthdate").value,
+    photo: photoPath,
 
-  age: document.getElementById("age").value,
+    birthdate: document.getElementById("birthdate").value,
 
-  gender: document.getElementById("gender").value,
+    age: document.getElementById("age").value,
 
-  address: document.getElementById("address").value,
+    gender: document.getElementById("gender").value,
 
-  mobile: document.getElementById("mobile").value,
+    address: document.getElementById("address").value,
 
-  email: document.getElementById("email").value,
+    mobile: document.getElementById("mobile").value,
 
-  birth_cert: birthPath,
-  school_record: schoolPath,
-  brgy_clearance: brgyPath
+    email: document.getElementById("email").value,
 
-};
+    birth_cert: birthPath,
+    school_record: schoolPath,
+    brgy_clearance: brgyPath
 
- const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
-  method: "POST",
-  headers: {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + SUPABASE_KEY,
-    "Content-Type": "application/json",
-    Prefer: "return=representation"
-  },
-  body: JSON.stringify(payload)
-});
+  };
 
-const text = await res.text();
+  // ✅ SAVE TO DATABASE
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify(payload)
+  });
 
-console.log("PAYLOAD:", payload);
-console.log("STATUS:", res.status);
-console.log("DB RESPONSE:", text);
+  const text = await res.text();
 
-if (!res.ok) {
-  alert("Save failed:\n" + text);
-  return;
-}
+  console.log("PAYLOAD:", payload);
+  console.log("STATUS:", res.status);
+  console.log("DB RESPONSE:", text);
 
-alert("Saved successfully!");
+  if (!res.ok) {
+    alert("Save failed:\n" + text);
+    return;
+  }
+
+  alert("Saved successfully!");
 }
 async function updateRecord() {
   if (!currentID) {
