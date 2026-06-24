@@ -526,13 +526,14 @@ async function uploadFile(file, folder) {
 // ✅ SAVE (FULL FIELDS)
 async function saveData() {
 
-  const { data: { user }, error } = await supabaseClient.auth.getUser();
+ const { data, error } = await supabaseClient.auth.getUser();
 
-console.log("USER:", user);
-console.log("ERROR:", error);
+console.log("AUTH DATA:", data);
+console.log("AUTH ERROR:", error);
 
-const userEmail = user?.email || "";
+const userEmail = data?.user?.email;
 
+console.log("USER EMAIL =", userEmail);
 alert("USER EMAIL = " + userEmail);
 
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
