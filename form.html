@@ -534,36 +534,30 @@ async function saveData() {
   const brgyFile = document.getElementById("brgy_clearance").files[0];
 
   // ✅ UPLOAD FILES
-  let photoPath = null;
+ let photoPath = null;
 
 if (photoFile) {
 
   const fileName = Date.now() + "_" + photoFile.name;
 
- const { data, error } = await supabaseClient.storage
-  .from("photos")
-  .upload(fileName, photoFile);
+  const { error } = await supabaseClient.storage
+    .from("photos")
+    .upload(fileName, photoFile);
 
-console.log("UPLOAD RESULT:", data);
-console.log("UPLOAD ERROR:", error);
+  if (error) {
+    console.error(error);
 
-if (error) {
-  console.error(error);
+    alert(
+      "PHOTO UPLOAD FAILED\n\n" +
+      error.message
+    );
 
-  alert(
-    "UPLOAD FAILED\n\n" +
-    "Message: " + error.message + "\n" +
-    "Status: " + error.statusCode
-  );
-
-  return;
-}
-
-photoPath = fileName;
-
-console.log("photoPath =", photoPath);
+    return;
+  }
 
   photoPath = fileName;
+
+  console.log("PHOTO SAVED:", photoPath);
 }
   const birthPath = await uploadFile(birthFile, "birth");
   const schoolPath = await uploadFile(schoolFile, "school");
@@ -619,29 +613,11 @@ if (!res.ok) {
 
 alert("Saved successfully!");
 }
- async function updateRecord() {
+async function updateRecord() {
   if (!currentID) {
     alert("No record selected");
     return;
   }
-
-  // ✅ GET FILES (PUT HERE)
-   const photoFile = document.getElementById("photo").files[0];
-
-if (photoFile) {
-  const fileName = Date.now() + "_" + photoFile.name;
-
-  const { error } = await supabaseClient.storage
-    .from("photos")
-    .upload(fileName, photoFile);
-
-  if (!error) {
-    payload.photo = fileName;
-  }
-}
-  const birthFile = document.getElementById("birth_cert").files[0];
-  const schoolFile = document.getElementById("school_record").files[0];
-  const brgyFile = document.getElementById("brgy_clearance").files[0];
 
   // ✅ BASE DATA
   let payload = {
@@ -654,7 +630,30 @@ if (photoFile) {
     email: document.getElementById("email").value
   };
 
-  // ✅ ONLY UPLOAD IF NEW FILE SELECTED
+  // ✅ PHOTO UPLOAD
+  const photoFile = document.getElementById("photo").files[0];
+
+  if (photoFile) {
+    const fileName = Date.now() + "_" + photoFile.name;
+
+    const { error } = await supabaseClient.storage
+      .from("photos")
+      .upload(fileName, photoFile);
+
+    if (error) {
+      console.error(error);
+      alert("Photo upload failed:\n" + error.message);
+      return;
+    }
+
+    payload.photo = fileName;
+  }
+
+  // ✅ DOCUMENT FILES
+  const birthFile = document.getElementById("birth_cert").files[0];
+  const schoolFile = document.getElementById("school_record").files[0];
+  const brgyFile = document.getElementById("brgy_clearance").files[0];
+
   if (birthFile) {
     payload.birth_cert = await uploadFile(birthFile, "birth");
   }
@@ -667,16 +666,18 @@ if (photoFile) {
     payload.brgy_clearance = await uploadFile(brgyFile, "brgy");
   }
 
-  // ✅ UPDATE RECORD
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?person_id=eq.${currentID}`, {
-    method: "PATCH",
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: "Bearer " + SUPABASE_KEY,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/${TABLE}?person_id=eq.${currentID}`,
+    {
+      method: "PATCH",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
 
   if (!res.ok) {
     const text = await res.text();
