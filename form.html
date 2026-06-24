@@ -531,6 +531,8 @@ async function saveData() {
   } = await supabaseClient.auth.getSession();
 
   const userEmail = session?.user?.email || "";
+  console.log("SESSION:", session);
+console.log("USER EMAIL:", userEmail);
 
   const id = document.getElementById("person_id").value || "ID-" + Date.now();
 
